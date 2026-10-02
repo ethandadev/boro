@@ -12,7 +12,14 @@ int main() {
 
     //load file
     std::ifstream file(fileName);
+    if (!file) {          // ! means "not", so "if the file did NOT open"
+        // handle the problem
+        std::cerr << "Error: Could not open file " << fileName << "\n"; // cerr is used to print error messages to the console
+        return 1;
+    }
+
     std::string line;
+
     while (std::getline(file, line)) { // while loop to read each line of the file until the end
         lines.push_back(line); // add the line to the vector
     }
