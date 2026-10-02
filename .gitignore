@@ -1,0 +1,9 @@
+# build outputs
+boro
+viewer
+*.o
+build/
+*.dSYM/
+
+# macOS
+.DS_Store
