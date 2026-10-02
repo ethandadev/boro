@@ -20,3 +20,8 @@ bool loadFile(const std::string& path, std::vector<std::string>& lines) {
 
     return true; // return true to indicate success
 }
+
+void insertChar(Buffer& buf, char c) {
+    buf.lines[buf.cursor.row].insert(buf.cursor.col, 1, c); // insert the character at the cursor position
+    buf.cursor.col++; // Move cursor to the right
+}
