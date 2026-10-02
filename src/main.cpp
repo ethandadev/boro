@@ -4,7 +4,7 @@
 #include <fstream> //for file input/output
 
 //load file function to make main cleaner
-bool loadFile(std::string path, std::vector<std::string>& lines) {
+bool loadFile(const std::string& path, std::vector<std::string>& lines) {
     std::ifstream file(path);
     if (!file) {          // ! means "not", so "if the file did NOT open"
         // handle the problem
