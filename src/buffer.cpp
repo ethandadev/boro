@@ -18,6 +18,10 @@ bool loadFile(const std::string& path, std::vector<std::string>& lines) {
         lines.push_back(line); // add the line to the vector
     }
 
+    if (lines.empty()) {
+        lines.push_back(""); // if the file is empty, add an empty line to the vector
+    }
+
     return true; // return true to indicate success
 }
 
