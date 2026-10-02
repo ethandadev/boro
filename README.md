@@ -5,9 +5,9 @@ The goal: edit boro's own source code in boro.
 
 ## Build
 ```
-clang++ -std=c++20 -Wall -Wextra viewer.cpp -o boro
-./boro somefile.cpp
+clang++ -std=c++20 -Wall -Wextra src/*.cpp -o boro
+./boro src/main.cpp
 ```
 
 ## Status
-Early days: currently a file viewer.
+Early days: loads selected file and displays lines
