@@ -4,10 +4,16 @@
 #include <fstream> //for file input/output
 
 //main function, the entry point of the program
-int main() {
+int main(int argc, char* argv[]) {
     std::cout << "Hello from boro\n\n"; // cout is used to print to the console
 
-    std::string fileName = "src/main.cpp"; 
+    if (argc < 2) { // argc is the number of arguments passed to the program, if less than 2, then no file name was provided
+        std::cerr << "Usage: boro <filename>\n"; // cerr is used to print error messages to the console
+        return 1; // return 1 indicates that the program has encountered an error
+    }
+
+
+    std::string fileName = argv[1]; // argv is an array of strings, argv[0] is the program name, argv[1] is the first argument passed to the program
     std::vector<std::string> lines; // vector is like a list or array
 
     //load file
