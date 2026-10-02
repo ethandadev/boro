@@ -18,3 +18,5 @@ bool loadFile(const std::string& path, std::vector<std::string>& lines);   // de
 void insertChar(Buffer& buf, char c); // declaration only
 
 void insertNewLine(Buffer& buf); // declaration only
+
+void deleteChar(Buffer& buf); // declaration only

@@ -37,3 +37,18 @@ void insertNewLine(Buffer& buf) {
     buf.cursor.row++; // Move cursor down
     buf.cursor.col = 0; // Move cursor to the beginning of the new line
 }
+
+void deleteChar(Buffer& buf) {
+    if (buf.cursor.row == 0 && buf.cursor.col == 0) {
+        return; // Nothing to delete if at the beginning of the buffer
+    } else if (buf.cursor.col > 0) {
+        buf.lines[buf.cursor.row].erase(buf.cursor.col - 1, 1); // erase the character before the cursor position
+        buf.cursor.col--; // Move cursor to the left
+    } else {
+        size_t prevLineLength = buf.lines[buf.cursor.row - 1].length(); // get the length of the previous line
+        buf.lines[buf.cursor.row - 1] += buf.lines[buf.cursor.row]; // append the current line to the previous line
+        buf.lines.erase(buf.lines.begin() + buf.cursor.row); // erase the current line
+        buf.cursor.row--; // Move cursor up
+        buf.cursor.col = prevLineLength; // Move cursor to the end of the previous line
+    } 
+}

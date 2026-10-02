@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
 
     size_t gutterWidth = std::to_string(lineCount).size(); // variable to store the highest digit in the line numbers
 
-
+    
 
     std::cout << "Opening " << fileName << " (" << lineCount << " lines)" << "\n";
 
