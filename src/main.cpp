@@ -3,6 +3,18 @@
 #include <vector> //for vector
 #include <fstream> //for file input/output
 
+
+struct Cursor {
+    size_t row = 0;
+    size_t col = 0;
+};
+
+struct Buffer {
+    std::vector<std::string> lines;
+    Cursor cursor;
+};
+
+
 //load file function to make main cleaner
 bool loadFile(const std::string& path, std::vector<std::string>& lines) {
     std::ifstream file(path);
@@ -34,19 +46,21 @@ int main(int argc, char* argv[]) {
 
 
     std::string fileName = argv[1]; // argv is an array of strings, argv[0] is the program name, argv[1] is the first argument passed to the program
-    std::vector<std::string> lines;
-    if (!loadFile(fileName, lines)) { // if loadFile returns false, then there was an error opening the file
+    Buffer buf;
+    if (!loadFile(fileName, buf.lines)) { // if loadFile returns false, then there was an error opening the file
         return 1;
     }
-    size_t lineCount = lines.size(); // size_t is an unsigned integer type used for sizes
+    size_t lineCount = buf.lines.size(); // size_t is an unsigned integer type used for sizes
 
 
     std::cout << "Opening " << fileName << " (" << lineCount << " lines)" << "\n";
     
 
     for (size_t  i = 0; i < lineCount; i++) { // for loop to iterate through the lines, start, keep going while, after each round
-        std::cout << i + 1 << " | " << lines[i] << "\n";
+        std::cout << i + 1 << " | " << buf.lines[i] << "\n";
     }
+
+    std::cout << "Cursor position: (" << buf.cursor.row << ", " << buf.cursor.col << ")\n";
 
     return 0; // return 0 indicates that the program has completed successfully
 }
