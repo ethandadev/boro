@@ -29,9 +29,6 @@ int main(int argc, char* argv[]) {
 
     std::cout << "Opening " << fileName << " (" << lineCount << " lines)" << "\n";
 
-    insertChar(buf, 'a'); // insert the character 'a' at the cursor position
-    insertChar(buf, 'b'); // insert the character 'b' at the cursor position
-
 
     for (size_t  i = 0; i < lineCount; i++) { // for loop to iterate through the lines, start, keep going while, after each round
         std::cout << std::setw(gutterWidth) << i + 1 << " | " << buf.lines[i] << "\n"; //std::setw is used to set the width of the output, i + 1 is used to display the line number starting from 1 instead of 0

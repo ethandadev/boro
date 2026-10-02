@@ -29,3 +29,11 @@ void insertChar(Buffer& buf, char c) {
     buf.lines[buf.cursor.row].insert(buf.cursor.col, 1, c); // insert the character at the cursor position
     buf.cursor.col++; // Move cursor to the right
 }
+
+void insertNewLine(Buffer& buf) {
+    std::string afterCursor = buf.lines[buf.cursor.row].substr(buf.cursor.col); // substr is like s[5:] in python
+    buf.lines[buf.cursor.row].erase(buf.cursor.col); // erase everything after the cursor position
+    buf.lines.insert(buf.lines.begin() + buf.cursor.row + 1, afterCursor);
+    buf.cursor.row++; // Move cursor down
+    buf.cursor.col = 0; // Move cursor to the beginning of the new line
+}
