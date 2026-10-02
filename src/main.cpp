@@ -3,6 +3,26 @@
 #include <vector> //for vector
 #include <fstream> //for file input/output
 
+//load file function to make main cleaner
+bool loadFile(std::string path, std::vector<std::string>& lines) {
+    std::ifstream file(path);
+    if (!file) {          // ! means "not", so "if the file did NOT open"
+        // handle the problem
+        std::cerr << "Error: Could not open file " << path << "\n"; // cerr is used to print error messages to the console
+        return false;
+    }
+
+    std::string line;
+
+    while (std::getline(file, line)) { // while loop to read each line of the file until the end
+        lines.push_back(line); // add the line to the vector
+    }
+
+    return true; // return true to indicate success
+}
+
+
+
 //main function, the entry point of the program
 int main(int argc, char* argv[]) {
     std::cout << "Hello from boro\n\n"; // cout is used to print to the console
@@ -14,22 +34,10 @@ int main(int argc, char* argv[]) {
 
 
     std::string fileName = argv[1]; // argv is an array of strings, argv[0] is the program name, argv[1] is the first argument passed to the program
-    std::vector<std::string> lines; // vector is like a list or array
-
-    //load file
-    std::ifstream file(fileName);
-    if (!file) {          // ! means "not", so "if the file did NOT open"
-        // handle the problem
-        std::cerr << "Error: Could not open file " << fileName << "\n"; // cerr is used to print error messages to the console
+    std::vector<std::string> lines;
+    if (!loadFile(fileName, lines)) { // if loadFile returns false, then there was an error opening the file
         return 1;
     }
-
-    std::string line;
-
-    while (std::getline(file, line)) { // while loop to read each line of the file until the end
-        lines.push_back(line); // add the line to the vector
-    }
-    
     size_t lineCount = lines.size(); // size_t is an unsigned integer type used for sizes
 
 
