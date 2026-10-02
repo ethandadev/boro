@@ -1,4 +1,4 @@
-// buffer.cpp — how it works
+// src/buffer.cpp — how it works
 #include "buffer.hpp"
 #include <fstream>
 #include <iostream>

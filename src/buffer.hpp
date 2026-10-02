@@ -1,4 +1,4 @@
-// buffer.hpp
+// src/buffer.hpp
 #pragma once
 #include <string>
 #include <vector>

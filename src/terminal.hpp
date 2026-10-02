@@ -1,3 +1,4 @@
+// src/terminal.hpp
 #pragma once
 #include "buffer.hpp"
 
