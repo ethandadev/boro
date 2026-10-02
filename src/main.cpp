@@ -2,37 +2,7 @@
 #include <string> //for string
 #include <vector> //for vector
 #include <fstream> //for file input/output
-
-
-struct Cursor {
-    size_t row = 0;
-    size_t col = 0;
-};
-
-struct Buffer {
-    std::vector<std::string> lines;
-    Cursor cursor;
-};
-
-
-//load file function to make main cleaner
-bool loadFile(const std::string& path, std::vector<std::string>& lines) {
-    std::ifstream file(path);
-    if (!file) {          // ! means "not", so "if the file did NOT open"
-        // handle the problem
-        std::cerr << "Error: Could not open file " << path << "\n"; // cerr is used to print error messages to the console
-        return false;
-    }
-
-    std::string line;
-
-    while (std::getline(file, line)) { // while loop to read each line of the file until the end
-        lines.push_back(line); // add the line to the vector
-    }
-
-    return true; // return true to indicate success
-}
-
+#include "buffer.hpp" //include the buffer header file
 
 
 //main function, the entry point of the program
