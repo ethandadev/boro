@@ -7,3 +7,5 @@ void render(const Buffer& buf);
 void enableRawMode();
 
 void disableRawMode();
+
+size_t getScreenRows();

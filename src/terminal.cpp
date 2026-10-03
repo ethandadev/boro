@@ -5,6 +5,13 @@
 #include <string>
 #include <termios.h> // terminal settings api
 #include <unistd.h> // for STDIN_FILENO
+#include <sys/ioctl.h> // for ioctl, winsize
+
+size_t getScreenRows() {
+    winsize ws;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws); // ioctl is used to get the window size
+    return ws.ws_row; // return the number of rows in the terminal
+}
 
 static termios original;
 
@@ -24,6 +31,8 @@ void disableRawMode() {
 }
 
 void render(const Buffer& buf) {
+    size_t screenRows = getScreenRows() - 1; // get the available rows in the terminal, minus 1 for the status bar
+
     std::cout << "\x1b[2J"; // clear the screen
     std::cout << "\x1b[H"; // move the cursor to the top-left corner
 
@@ -33,9 +42,12 @@ void render(const Buffer& buf) {
 
     for (size_t  i = 0; i < lineCount; i++) { // for loop to iterate through the lines, start, keep going while, after each round
         std::cout << std::setw(gutterWidth) << i + 1 << " | " << buf.lines[i] << "\n"; //std::setw is used to set the width of the output, i + 1 is used to display the line number starting from 1 instead of 0
+        if (i >= screenRows - 1) { // if the current line is greater than or equal to the available rows, break the loop
+            break;
+        }
     }
 
-    std::cout << "Cursor position: (" << buf.cursor.row << ", " << buf.cursor.col << ")\n";
+    std::cout << "Cursor position: (" << buf.cursor.row << ", " << buf.cursor.col << ")";
 
     std::cout << "\x1b[" << buf.cursor.row + 1 << ";" << buf.cursor.col + gutterWidth + 3 + 1 << "H";
 
