@@ -3,6 +3,7 @@
 #include <string> //for string
 #include <vector> //for vector
 #include <iomanip> //for std::setw
+#include <unistd.h> //for STDIN_FILENO
 #include "buffer.hpp" //include the buffer header file
 #include "terminal.hpp" //include the terminal header file
 
@@ -23,8 +24,22 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    render(buf); // call the render function to display the buffer contents
-    std::cin.get(); // wait for user input before exiting
+    // render(buf); // call the render function to display the buffer contents
+    // std::cin.get(); // wait for user input before exiting
 
+    enableRawMode(); // call the enableRawMode function to enable raw mode
+
+    while (true) { // infinite loop to keep the program running until the user exits
+        char c;
+        read(STDIN_FILENO, &c, 1);    // wait for 1 key, store it in c
+
+        std::cout << int(c) << "\n"; // print the integer value of the character pressed
+
+        if (c == 'q') {
+            break;
+        }
+    }
+    disableRawMode(); // call the disableRawMode function to disable raw mode
+    
     return 0; // return 0 indicates that the program has completed successfully
 }

@@ -3,6 +3,22 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
+#include <termios.h> // terminal settings api
+#include <unistd.h> // for STDIN_FILENO
+
+static termios original;
+
+void enableRawMode() {
+    tcgetattr(STDIN_FILENO, &original);        // read the current settings into `original`
+    termios raw = original;                    // make a copy to modify
+    raw.c_lflag &= ~(ECHO | ICANON);           // turn OFF echo and line-buffering
+    raw.c_iflag &= ~(IXON);    // disable Ctrl+S / Ctrl+Q flow control
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);  // apply the modified settings
+}
+
+void disableRawMode() {
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &original);
+}
 
 void render(const Buffer& buf) {
     std::cout << "\x1b[2J"; // clear the screen
