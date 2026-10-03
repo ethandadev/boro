@@ -6,6 +6,7 @@
 #include <termios.h> // terminal settings api
 #include <unistd.h> // for STDIN_FILENO
 #include <sys/ioctl.h> // for ioctl, winsize
+#include <ctime> // for time_t
 
 size_t getScreenRows() {
     winsize ws;
@@ -20,6 +21,8 @@ void enableRawMode() {
     termios raw = original;                    // make a copy to modify
     raw.c_lflag &= ~(ECHO | ICANON);           // turn OFF echo and line-buffering
     raw.c_iflag &= ~(IXON);    // disable Ctrl+S / Ctrl+Q flow control
+    raw.c_cc[VMIN] = 0;
+    raw.c_cc[VTIME] = 1;
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);  // apply the modified settings
 
     std::cout << "\x1b[?1049h";   // switch to alternate screen
@@ -47,7 +50,13 @@ void render(const Buffer& buf) {
         }
     }
 
-    std::cout << "Cursor position: (" << buf.cursor.row << ", " << buf.cursor.col << ")";
+    std::cout << "\x1b[" << screenRows + 1 << ";1H";
+    time_t currentTime = std::time(nullptr); // get the current time
+    if (!buf.status.empty() && (currentTime - buf.statusTime) < 3) {
+        std::cout << buf.status; // status message will be displayed for 3 seconds
+    } else {
+        std::cout << "Ctrl+S to save | Ctrl+Q to quit"; // default status message
+    }
 
     std::cout << "\x1b[" << buf.cursor.row + 1 << ";" << buf.cursor.col + gutterWidth + 3 + 1 << "H";
 

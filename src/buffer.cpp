@@ -56,7 +56,6 @@ void deleteChar(Buffer& buf) {
 bool saveFile(const std::string& path, const std::vector<std::string>& lines) {
     std::ofstream file(path);
     if (!file) {
-        std::cerr << "Error: Could not open file " << path << " for writing\n";
         return false;
     }
 
@@ -65,4 +64,9 @@ bool saveFile(const std::string& path, const std::vector<std::string>& lines) {
     }
 
     return true;
+}
+
+void setStatus(Buffer& buf, const std::string& msg) {
+    buf.status = msg;
+    buf.statusTime = std::time(nullptr); // set the status time to the current time
 }

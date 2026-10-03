@@ -30,9 +30,15 @@ int main(int argc, char* argv[]) {
         render(buf); // call the render function to display the buffer contents
 
         char c;
-        read(STDIN_FILENO, &c, 1);    // wait for 1 key, store it in c
+        ssize_t n = read(STDIN_FILENO, &c, 1);    // wait for 1 key, store it in c
 
-
+        if (n == 0) {
+            continue; // if no key was pressed, continue the loop
+        } else if (n == -1) {
+            std::cerr << "Error reading input\n"; // if there was an error reading input, print an error message
+            break; // exit the loop
+        }
+        
         if (int(c) == 17) {
             break; // exit the loop if Ctrl+Q is pressed
         } else if (int(c) == 127) { // delete key
@@ -43,7 +49,9 @@ int main(int argc, char* argv[]) {
             insertChar(buf, c); // call the insertChar function to insert a character
         } else if (int(c) == 19) { // Ctrl+S
             if (!saveFile(fileName, buf.lines)) { // if saveFile returns false, then there was an error saving the file
-                std::cerr << "Error: Could not save file " << fileName << "\n"; // print an error message to the console
+                setStatus(buf, "Error: Could not save file " + fileName); // set the status message
+            } else {
+                setStatus(buf, "Saved " + std::to_string(buf.lines.size()) + " lines to " + fileName); // set the status message
             }
         }
     }
