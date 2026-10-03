@@ -41,6 +41,10 @@ int main(int argc, char* argv[]) {
             insertNewLine(buf); // call the insertNewLine function to insert a new line
         } else if (c >= 32 && c <= 126) { // printable characters
             insertChar(buf, c); // call the insertChar function to insert a character
+        } else if (int(c) == 19) { // Ctrl+S
+            if (!saveFile(fileName, buf.lines)) { // if saveFile returns false, then there was an error saving the file
+                std::cerr << "Error: Could not save file " << fileName << "\n"; // print an error message to the console
+            }
         }
     }
     disableRawMode(); // call the disableRawMode function to disable raw mode

@@ -52,3 +52,17 @@ void deleteChar(Buffer& buf) {
         buf.cursor.col = prevLineLength; // Move cursor to the end of the previous line
     } 
 }
+
+bool saveFile(const std::string& path, const std::vector<std::string>& lines) {
+    std::ofstream file(path);
+    if (!file) {
+        std::cerr << "Error: Could not open file " << path << " for writing\n";
+        return false;
+    }
+
+    for (const std::string& line : lines) {
+        file << line << "\n";
+    }
+
+    return true;
+}
