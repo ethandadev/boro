@@ -14,10 +14,13 @@ void enableRawMode() {
     raw.c_lflag &= ~(ECHO | ICANON);           // turn OFF echo and line-buffering
     raw.c_iflag &= ~(IXON);    // disable Ctrl+S / Ctrl+Q flow control
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);  // apply the modified settings
+
+    std::cout << "\x1b[?1049h";   // switch to alternate screen
 }
 
 void disableRawMode() {
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &original);
+    std::cout << "\x1b[?1049l";   // switch back to normal screen
 }
 
 void render(const Buffer& buf) {
@@ -35,4 +38,6 @@ void render(const Buffer& buf) {
     std::cout << "Cursor position: (" << buf.cursor.row << ", " << buf.cursor.col << ")\n";
 
     std::cout << "\x1b[" << buf.cursor.row + 1 << ";" << buf.cursor.col + gutterWidth + 3 + 1 << "H";
+
+    std::cout << std::flush;   // send everything to the terminal NOW
 }

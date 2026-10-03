@@ -10,7 +10,6 @@
 
 //main function, the entry point of the program
 int main(int argc, char* argv[]) {
-    std::cout << "Hello from boro\n\n"; // cout is used to print to the console
 
     if (argc < 2) { // argc is the number of arguments passed to the program, if less than 2, then no file name was provided
         std::cerr << "Usage: boro <filename>\n"; // cerr is used to print error messages to the console
@@ -24,19 +23,24 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // render(buf); // call the render function to display the buffer contents
-    // std::cin.get(); // wait for user input before exiting
 
     enableRawMode(); // call the enableRawMode function to enable raw mode
 
     while (true) { // infinite loop to keep the program running until the user exits
+        render(buf); // call the render function to display the buffer contents
+
         char c;
         read(STDIN_FILENO, &c, 1);    // wait for 1 key, store it in c
 
-        std::cout << int(c) << "\n"; // print the integer value of the character pressed
 
-        if (c == 'q') {
-            break;
+        if (int(c) == 17) {
+            break; // exit the loop if Ctrl+Q is pressed
+        } else if (int(c) == 127) { // delete key
+            deleteChar(buf); // call the deleteChar function to delete a character
+        } else if (int(c) == 10) { // enter key
+            insertNewLine(buf); // call the insertNewLine function to insert a new line
+        } else if (c >= 32 && c <= 126) { // printable characters
+            insertChar(buf, c); // call the insertChar function to insert a character
         }
     }
     disableRawMode(); // call the disableRawMode function to disable raw mode
