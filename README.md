@@ -12,4 +12,4 @@ clang++ -std=c++20 -Wall -Wextra src/*.cpp -o boro
 ```
 
 ## Status
-Early days: loads selected file and displays lines
+Early days: working kinda, you can edit files but working on the capability to move with arrow keys.
