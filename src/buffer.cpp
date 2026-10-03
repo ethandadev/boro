@@ -4,7 +4,8 @@
 #include <iostream>
 
 //load file function to make main cleaner
-bool loadFile(const std::string& path, std::vector<std::string>& lines) {
+bool loadFile(Buffer& buf, const std::string& path, std::vector<std::string>& lines) {
+    buf.fileName = path; // store the file name in the buffer
     std::ifstream file(path);
     if (!file) {          // ! means "not", so "if the file did NOT open"
         // handle the problem
@@ -22,12 +23,14 @@ bool loadFile(const std::string& path, std::vector<std::string>& lines) {
         lines.push_back(""); // if the file is empty, add an empty line to the vector
     }
 
+
     return true; // return true to indicate success
 }
 
 void insertChar(Buffer& buf, char c) {
     buf.lines[buf.cursor.row].insert(buf.cursor.col, 1, c); // insert the character at the cursor position
     buf.cursor.col++; // Move cursor to the right
+    buf.dirty = true; // set the dirty flag to true to indicate that the buffer has unsaved changes
 }
 
 void insertNewLine(Buffer& buf) {
@@ -36,6 +39,7 @@ void insertNewLine(Buffer& buf) {
     buf.lines.insert(buf.lines.begin() + buf.cursor.row + 1, afterCursor);
     buf.cursor.row++; // Move cursor down
     buf.cursor.col = 0; // Move cursor to the beginning of the new line
+    buf.dirty = true; // set the dirty flag to true to indicate that the buffer has unsaved changes
 }
 
 void deleteChar(Buffer& buf) {
@@ -51,9 +55,10 @@ void deleteChar(Buffer& buf) {
         buf.cursor.row--; // Move cursor up
         buf.cursor.col = prevLineLength; // Move cursor to the end of the previous line
     } 
+    buf.dirty = true; // set the dirty flag to true to indicate that the buffer has unsaved changes
 }
 
-bool saveFile(const std::string& path, const std::vector<std::string>& lines) {
+bool saveFile(Buffer& buf,const std::string& path, const std::vector<std::string>& lines) {
     std::ofstream file(path);
     if (!file) {
         return false;
@@ -63,6 +68,7 @@ bool saveFile(const std::string& path, const std::vector<std::string>& lines) {
         file << line << "\n";
     }
 
+    buf.dirty = false; // reset the dirty flag after saving
     return true;
 }
 
