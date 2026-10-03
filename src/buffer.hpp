@@ -18,7 +18,7 @@ struct Buffer {
     bool dirty = false; // flag to indicate if the buffer has unsaved changes
 };
 
-bool loadFile(Buffer& buf, const std::string& path, std::vector<std::string>& lines);   // declaration only
+bool loadFile(Buffer& buf, const std::string& path);   // declaration only
 
 void insertChar(Buffer& buf, char c); // declaration only
 
@@ -26,6 +26,6 @@ void insertNewLine(Buffer& buf); // declaration only
 
 void deleteChar(Buffer& buf); // declaration only
 
-bool saveFile(Buffer& buf, const std::string& path, const std::vector<std::string>& lines); // declaration only
+bool saveFile(Buffer& buf, const std::string& path); // declaration only
 
 void setStatus(Buffer& buf, const std::string& msg); // declaration only

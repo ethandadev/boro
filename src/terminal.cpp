@@ -35,7 +35,7 @@ void disableRawMode() {
 }
 
 void render(const Buffer& buf) {
-    size_t screenRows = getScreenRows() - 2; // get the available rows in the terminal, minus 1 for the status bar
+    size_t screenRows = getScreenRows() - 2; // get the available rows in the terminal, minus 2 for the status bar and title bar
 
     std::cout << "\x1b[2J"; // clear the screen
     std::cout << "\x1b[H"; // move the cursor to the top-left corner

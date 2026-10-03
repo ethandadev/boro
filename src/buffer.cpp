@@ -4,7 +4,7 @@
 #include <iostream>
 
 //load file function to make main cleaner
-bool loadFile(Buffer& buf, const std::string& path, std::vector<std::string>& lines) {
+bool loadFile(Buffer& buf, const std::string& path) {
     buf.fileName = path; // store the file name in the buffer
     std::ifstream file(path);
     if (!file) {          // ! means "not", so "if the file did NOT open"
@@ -16,11 +16,11 @@ bool loadFile(Buffer& buf, const std::string& path, std::vector<std::string>& li
     std::string line;
 
     while (std::getline(file, line)) { // while loop to read each line of the file until the end
-        lines.push_back(line); // add the line to the vector
+        buf.lines.push_back(line); // add the line to the vector
     }
 
-    if (lines.empty()) {
-        lines.push_back(""); // if the file is empty, add an empty line to the vector
+    if (buf.lines.empty()) {
+        buf.lines.push_back(""); // if the file is empty, add an empty line to the vector
     }
 
 
@@ -58,13 +58,13 @@ void deleteChar(Buffer& buf) {
     buf.dirty = true; // set the dirty flag to true to indicate that the buffer has unsaved changes
 }
 
-bool saveFile(Buffer& buf,const std::string& path, const std::vector<std::string>& lines) {
+bool saveFile(Buffer& buf,const std::string& path) {
     std::ofstream file(path);
     if (!file) {
         return false;
     }
 
-    for (const std::string& line : lines) {
+    for (const std::string& line : buf.lines) {
         file << line << "\n";
     }
 

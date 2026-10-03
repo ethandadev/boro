@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
 
     std::string fileName = argv[1]; // argv is an array of strings, argv[0] is the program name, argv[1] is the first argument passed to the program
     Buffer buf;
-    if (!loadFile(buf, fileName, buf.lines)) { // if loadFile returns false, then there was an error opening the file
+    if (!loadFile(buf, fileName)) { // if loadFile returns false, then there was an error opening the file
         return 1;
     }
 
@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
         } else if (c >= 32 && c <= 126) { // printable characters
             insertChar(buf, c); // call the insertChar function to insert a character
         } else if (int(c) == 19) { // Ctrl+S
-            if (!saveFile(buf, fileName, buf.lines)) { // if saveFile returns false, then there was an error saving the file
+            if (!saveFile(buf, fileName)) { // if saveFile returns false, then there was an error saving the file
                 setStatus(buf, "Error: Could not save file " + fileName); // set the status message
             } else {
                 setStatus(buf, "Saved " + std::to_string(buf.lines.size()) + " lines to " + fileName); // set the status message
