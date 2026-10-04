@@ -2,10 +2,16 @@
 #include "buffer.hpp"
 #include <fstream>
 #include <iostream>
+#include <filesystem>
 
 //load file function to make main cleaner
 bool loadFile(Buffer& buf, const std::string& path) {
     buf.fileName = path; // store the file name in the buffer
+    if (!std::filesystem::exists(path)) {
+        buf.lines.push_back(""); // if the file does not exist, create a new empty buffer
+        setStatus(buf, "New file: " + path); // set the status message
+        return true; // return true to indicate success
+    }
     std::ifstream file(path);
     if (!file) {          // ! means "not", so "if the file did NOT open"
         // handle the problem
