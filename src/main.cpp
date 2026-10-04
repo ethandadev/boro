@@ -27,6 +27,10 @@ int main(int argc, char* argv[]) {
     enableRawMode(); // call the enableRawMode function to enable raw mode
 
     while (true) { // infinite loop to keep the program running until the user exits
+
+        size_t textRows = getScreenRows() - 2; // get the number of rows in the terminal, minus 2 for the status bar and title bar
+        scroll(buf, textRows); // call the scroll function to update the row offset
+
         render(buf); // call the render function to display the buffer contents
 
         char c;
@@ -72,6 +76,7 @@ int main(int argc, char* argv[]) {
                 }
             }
         }
+
     }
     disableRawMode(); // call the disableRawMode function to disable raw mode
     

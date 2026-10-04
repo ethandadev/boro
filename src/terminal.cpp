@@ -48,11 +48,12 @@ void render(const Buffer& buf) {
 
     size_t gutterWidth = std::to_string(lineCount).size(); // variable to store the highest digit in the line numbers
 
-    for (size_t  i = 0; i < lineCount; i++) { // for loop to iterate through the lines, start, keep going while, after each round
-        std::cout << std::setw(gutterWidth) << i + 1 << " | " << buf.lines[i] << "\n"; //std::setw is used to set the width of the output, i + 1 is used to display the line number starting from 1 instead of 0
-        if (i >= screenRows - 1) { // if the current line is greater than or equal to the available rows, break the loop
+    for (size_t  i = 0; i < screenRows; i++) { // for loop to iterate through the lines, start, keep going while, after each round
+        size_t fileLine = i + buf.rowOffset;
+        if (fileLine >= buf.lines.size()) {
             break;
         }
+        std::cout << std::setw(gutterWidth) << fileLine + 1 << " | " << buf.lines[fileLine] << "\n"; //std::setw is used to set the width of the output, i + 1 is used to display the line number starting from 1 instead of 0
     }
 
     std::cout << "\x1b[" << screenRows + 2 << ";1H";
@@ -63,7 +64,7 @@ void render(const Buffer& buf) {
         std::cout << "Ctrl+S to save | Ctrl+Q to quit"; // default status message
     }
 
-    std::cout << "\x1b[" << buf.cursor.row + 2 << ";" << buf.cursor.col + gutterWidth + 3 + 1 << "H";
+    std::cout << "\x1b[" << buf.cursor.row - buf.rowOffset + 2 << ";" << buf.cursor.col + gutterWidth + 3 + 1 << "H";
 
     std::cout << std::flush;   // send everything to the terminal NOW
 }

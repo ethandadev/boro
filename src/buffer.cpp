@@ -112,3 +112,12 @@ void moveRight(Buffer& buf) {
         buf.cursor.col = 0; // Move cursor to the beginning of the next line
     }
 }
+
+
+void scroll(Buffer& buf, size_t textRows) {
+    if (buf.cursor.row < buf.rowOffset) {
+        buf.rowOffset = buf.cursor.row; // Scroll up
+    } else if (buf.cursor.row >= buf.rowOffset + textRows) {
+        buf.rowOffset = buf.cursor.row - textRows + 1; // Scroll down
+    }
+}

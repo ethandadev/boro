@@ -16,7 +16,7 @@ struct Buffer {
     std::time_t statusTime = 0;
     std::string fileName = "";
     bool dirty = false; // flag to indicate if the buffer has unsaved changes
-    size_t row_offset = 0; // row offset for scrolling
+    size_t rowOffset = 0; // row offset for scrolling
 };
 
 bool loadFile(Buffer& buf, const std::string& path);   // declaration only
@@ -40,3 +40,5 @@ void moveDown(Buffer& buf); // declaration only
 void moveLeft(Buffer& buf); // declaration only
 
 void moveRight(Buffer& buf); // declaration only
+
+void scroll(Buffer& buf, size_t textRows); // declaration only
