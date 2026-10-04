@@ -76,3 +76,39 @@ void setStatus(Buffer& buf, const std::string& msg) {
     buf.status = msg;
     buf.statusTime = std::time(nullptr); // set the status time to the current time
 }
+
+void moveUp(Buffer& buf) {
+    if (buf.cursor.row > 0) {
+        buf.cursor.row--;
+        if (buf.cursor.col > buf.lines[buf.cursor.row].length()) {
+            buf.cursor.col = buf.lines[buf.cursor.row].length(); // Move cursor to the end of the line if it's longer than the current column
+        }
+    }
+}
+
+void moveDown(Buffer& buf) {
+    if (buf.cursor.row < buf.lines.size() - 1) {
+        buf.cursor.row++;
+        if (buf.cursor.col > buf.lines[buf.cursor.row].length()) {
+            buf.cursor.col = buf.lines[buf.cursor.row].length(); // Move cursor to the end of the line if it's longer than the current column
+        }
+    }
+}
+
+void moveLeft(Buffer& buf) {
+    if (buf.cursor.col > 0) {
+        buf.cursor.col--;
+    } else if (buf.cursor.row > 0) {
+        buf.cursor.row--;
+        buf.cursor.col = buf.lines[buf.cursor.row].length(); // Move cursor to the end of the previous line
+    }
+}
+
+void moveRight(Buffer& buf) {
+    if (buf.cursor.col < buf.lines[buf.cursor.row].length()) {
+        buf.cursor.col++;
+    } else if (buf.cursor.row < buf.lines.size() - 1) {
+        buf.cursor.row++;
+        buf.cursor.col = 0; // Move cursor to the beginning of the next line
+    }
+}

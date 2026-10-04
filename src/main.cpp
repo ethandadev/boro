@@ -53,6 +53,24 @@ int main(int argc, char* argv[]) {
             } else {
                 setStatus(buf, "Saved " + std::to_string(buf.lines.size()) + " lines to " + fileName); // set the status message
             }
+        } else if (int(c) == 27) { // escape sequence for arrow keys
+            char a;
+            char b;
+            ssize_t na = read(STDIN_FILENO, &a, 1); // read the next character
+            ssize_t nb = read(STDIN_FILENO, &b, 1); // read the next character
+            if (na == 0 || nb == 0) {
+                continue; // if no key was pressed, continue the loop
+            } else if (a == '[') { // if the first character is '[', then it is an arrow key
+                if (b == 'A') { // up arrow
+                    moveUp(buf); // call the moveUp function to move the cursor up
+                } else if (b == 'B') { // down arrow
+                    moveDown(buf); // call the moveDown function to move the cursor down
+                } else if (b == 'C') { // right arrow
+                    moveRight(buf); // call the moveRight function to move the cursor right
+                } else if (b == 'D') { // left arrow
+                    moveLeft(buf); // call the moveLeft function to move the cursor left
+                }
+            }
         }
     }
     disableRawMode(); // call the disableRawMode function to disable raw mode
