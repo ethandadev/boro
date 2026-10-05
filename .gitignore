@@ -4,6 +4,8 @@ viewer
 *.o
 build/
 *.dSYM/
+*.pkg
+pkgroot
 
 # macOS
 .DS_Store
