@@ -4,6 +4,15 @@ SRC = $(wildcard src/*.cpp)
 HDR = $(wildcard src/*.hpp)
 FILE ?= src/main.cpp
 
+# read the version straight from config.hpp, so it's only defined in one place
+VERSION := $(shell sed -n 's/.*VERSION *= *"\([^"]*\)".*/\1/p' src/config.hpp)
+
+# signing settings — fill these in
+APP_CERT     = Developer ID Application: Beyond Diamond Limited (92JK43YAHC)
+INSTALL_CERT = Developer ID Installer: Beyond Diamond Limited (92JK43YAHC)
+NOTARY_PROFILE = boro-notary
+PKG = boro-$(VERSION).pkg
+
 boro: $(SRC) $(HDR)
 	$(CXX) $(CXXFLAGS) $(SRC) -o boro
 
@@ -16,4 +25,22 @@ release: $(SRC) $(HDR)
 install: release
 	cp boro /usr/local/bin/boro
 
-.PHONY: run release
+# universal (Apple Silicon + Intel) release build
+universal: $(SRC) $(HDR)
+	$(CXX) -std=c++20 -Wall -Wextra -O2 -arch arm64 -arch x86_64 -mmacosx-version-min=11.0 $(SRC) -o boro
+
+# signed + notarized installer
+pkg: universal
+	codesign --force --sign "$(APP_CERT)" --options runtime --timestamp boro
+	rm -rf pkgroot
+	mkdir -p pkgroot/usr/local/bin
+	cp boro pkgroot/usr/local/bin/
+	pkgbuild --root pkgroot --identifier com.ethandadev.boro --version $(VERSION) \
+	         --install-location / --sign "$(INSTALL_CERT)" $(PKG)
+	xcrun notarytool submit $(PKG) --keychain-profile "$(NOTARY_PROFILE)" --wait
+	xcrun stapler staple $(PKG)
+
+clean:
+	rm -rf boro pkgroot *.pkg
+
+.PHONY: run release install universal pkg clean
