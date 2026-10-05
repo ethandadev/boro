@@ -4,7 +4,7 @@
 #include <ctime>
 #include <string>
 
-
+// terminal view handles the view state of the terminal view
 struct TerminalView {
     size_t rowOffset = 0;
     std::string status;

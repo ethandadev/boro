@@ -76,6 +76,7 @@ bool saveFile(Buffer& buf,const std::string& path) {
     }
 
     buf.dirty = false; // reset the dirty flag after saving
+    buf.isNew = false; // no longer new as you saved
     return true;
 }
 

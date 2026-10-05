@@ -54,7 +54,14 @@ void render(const Buffer& buf, const TerminalView& view) {
     std::cout << "\x1b[H"; // move the cursor to the top-left corner
 
     // draw title bar
-    std::string state = buf.dirty ? "Not Saved" : "Saved";
+    std::string state;
+    if (buf.isNew) {
+        state = "New File";
+    } else {
+        state = buf.dirty ? "Not Saved" : "Saved"; // c++'s way of state = "Not Saved" if buf.dirty else "Saved"
+    }
+
+    //print the title first
     std::cout << APP_NAME << " v" << VERSION << " | " << buf.fileName << " | " << buf.lines.size() << " lines | " << state << "\n";
 
     size_t lineCount = buf.lines.size(); // size_t is an unsigned integer type used for sizes
