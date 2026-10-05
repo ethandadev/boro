@@ -25,6 +25,17 @@ I had to choose something to make, a code editor gave all the fundamentals, so h
 
 ---
 
+## Install
+
+**Homebrew**
+```
+brew install ethandadev/tap/boro
+```
+
+**Installer:** download `boro-0.1.0.pkg` from [Releases](https://github.com/ethandadev/boro/releases).
+
+---
+
 ## Contributing
 
 I am literally *hoping* for people to help develop boro.
