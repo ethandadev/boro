@@ -1,15 +1,36 @@
 # boro
 
-A terminal code editor written in C++, built from scratch while learning the language.
-The goal: edit boro's own source code in boro.
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/ethandadev/boro/blob/main/LICENSE)
 
-macOS only.
+A code editor written in C++, built from scratch.
 
-## Build
+**The goal**: edit boro's own source code in boro.
+
+boro was started as a passion project for me, I wanted to learn something new, I chose *C++*.
+I had to choose something to make, a code editor gave all the fundamentals, so here we are.
+
+
+## Contributing
+I am literally *hoping* for people to help develop boro.
+Anyone is welcome, from no experience to being a experienced developer.
+
+### Build
+To build boro run
 ```
-clang++ -std=c++20 -Wall -Wextra src/*.cpp -o boro
-./boro src/main.cpp
+make
 ```
+in the project directory.
 
 ## Status
-Early days: working kinda, you can edit files but working on the capability to move with arrow keys.
+It's going quite well, so far it's almost like _GNU Nano_ except the find and replace features.
+You can 100% edit boro's own source code in boro.
+
+## TODO
+
+For anyone else(or me) to work on:
+- GUI
+- Better Comments
+
+## License
+[MIT License](https://github.com/ethandadev/boro/blob/main/LICENSE)
+

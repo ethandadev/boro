@@ -15,15 +15,19 @@ PKG = boro-$(VERSION).pkg
 
 boro: $(SRC) $(HDR)
 	$(CXX) $(CXXFLAGS) $(SRC) -o boro
+	mkdir build
+	mv boro build
 
 run: boro
 	./boro $(FILE)
 
 release: $(SRC) $(HDR)
 	$(CXX) -std=c++20 -Wall -Wextra -O2 $(SRC) -o boro
+	mkdir build
+	mv boro build
 
 install: release
-	cp boro /usr/local/bin/boro
+	cp build/boro /usr/local/bin/boro
 
 # universal (Apple Silicon + Intel) release build
 universal: $(SRC) $(HDR)
@@ -32,15 +36,19 @@ universal: $(SRC) $(HDR)
 # signed + notarized installer
 pkg: universal
 	codesign --force --sign "$(APP_CERT)" --options runtime --timestamp boro
-	rm -rf pkgroot
+	rm -rf build/pkgroot
 	mkdir -p pkgroot/usr/local/bin
 	cp boro pkgroot/usr/local/bin/
 	pkgbuild --root pkgroot --identifier com.ethandadev.boro --version $(VERSION) \
 	         --install-location / --sign "$(INSTALL_CERT)" $(PKG)
 	xcrun notarytool submit $(PKG) --keychain-profile "$(NOTARY_PROFILE)" --wait
 	xcrun stapler staple $(PKG)
+	mv pkgbuild build
+	mv $(PKG) build
+	mv boro build
+
 
 clean:
-	rm -rf boro pkgroot *.pkg
+	rm -rf boro pkgroot *.pkg build
 
 .PHONY: run release install universal pkg clean
