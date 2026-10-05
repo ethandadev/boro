@@ -130,7 +130,7 @@ void scroll(Buffer& buf, size_t textRows) {
 }
 
 void insertTab(Buffer& buf) {
-    buf.lines[buf.cursor.row].insert(buf.cursor.col, "    "); // insert the character at the cursor position
+    buf.lines[buf.cursor.row].insert(buf.cursor.col, TAB_WIDTH, ' '); // insert the character at the cursor position
     buf.cursor.col += TAB_WIDTH; // Move cursor to the right
     buf.dirty = true; // set the dirty flag to true to indicate that the buffer has unsaved changes
 }
