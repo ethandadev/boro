@@ -75,6 +75,8 @@ int main(int argc, char* argv[]) {
                     moveLeft(buf); // call the moveLeft function to move the cursor left
                 }
             }
+        } else if (int(c) == 9) {
+            insertTab(buf);
         }
 
     }

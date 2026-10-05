@@ -42,3 +42,6 @@ void moveLeft(Buffer& buf); // declaration only
 void moveRight(Buffer& buf); // declaration only
 
 void scroll(Buffer& buf, size_t textRows); // declaration only
+
+void insertTab(Buffer& buf); // declaration only
+

@@ -1,5 +1,6 @@
 // src/buffer.cpp — how it works
 #include "buffer.hpp"
+#include "config.hpp"
 #include <fstream>
 #include <iostream>
 #include <filesystem>
@@ -126,4 +127,10 @@ void scroll(Buffer& buf, size_t textRows) {
     } else if (buf.cursor.row >= buf.rowOffset + textRows) {
         buf.rowOffset = buf.cursor.row - textRows + 1; // Scroll down
     }
+}
+
+void insertTab(Buffer& buf) {
+    buf.lines[buf.cursor.row].insert(buf.cursor.col, "    "); // insert the character at the cursor position
+    buf.cursor.col += TAB_WIDTH; // Move cursor to the right
+    buf.dirty = true; // set the dirty flag to true to indicate that the buffer has unsaved changes
 }
