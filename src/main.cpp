@@ -13,25 +13,28 @@ int main(int argc, char* argv[]) {
 
     if (argc < 2) { // argc is the number of arguments passed to the program, if less than 2, then no file name was provided
         std::cerr << "Usage: boro <filename>\n"; // cerr is used to print error messages to the console
-        return 1; // return 1 indicates that the program has encountered an error
+        return 1; // return 1 indicates that the program has encountered an error 
     }
 
 
     std::string fileName = argv[1]; // argv is an array of strings, argv[0] is the program name, argv[1] is the first argument passed to the program
     Buffer buf;
+    TerminalView view;
     if (!loadFile(buf, fileName)) { // if loadFile returns false, then there was an error opening the file
         return 1;
     }
 
-
+    if (buf.isNew) {
+        setStatus(view, "New File: " + fileName);
+    }
     enableRawMode(); // call the enableRawMode function to enable raw mode
 
     while (true) { // infinite loop to keep the program running until the user exits
 
         size_t textRows = getScreenRows() - 2; // get the number of rows in the terminal, minus 2 for the status bar and title bar
-        scroll(buf, textRows); // call the scroll function to update the row offset
+        scroll(view, buf, textRows); // call the scroll function to update the row offset
 
-        render(buf); // call the render function to display the buffer contents
+        render(buf, view); // call the render function to display the buffer contents
 
         char c;
         ssize_t n = read(STDIN_FILENO, &c, 1);    // wait for 1 key, store it in c
@@ -53,9 +56,9 @@ int main(int argc, char* argv[]) {
             insertChar(buf, c); // call the insertChar function to insert a character
         } else if (int(c) == 19) { // Ctrl+S
             if (!saveFile(buf, fileName)) { // if saveFile returns false, then there was an error saving the file
-                setStatus(buf, "Error: Could not save file " + fileName); // set the status message
+                setStatus(view, "Error: Could not save file " + fileName); // set the status message
             } else {
-                setStatus(buf, "Saved " + std::to_string(buf.lines.size()) + " lines to " + fileName); // set the status message
+                setStatus(view, "Saved " + std::to_string(buf.lines.size()) + " lines to " + fileName); // set the status message
             }
         } else if (int(c) == 27) { // escape sequence for arrow keys
             char a;

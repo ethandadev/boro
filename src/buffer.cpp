@@ -10,7 +10,7 @@ bool loadFile(Buffer& buf, const std::string& path) {
     buf.fileName = path; // store the file name in the buffer
     if (!std::filesystem::exists(path)) {
         buf.lines.push_back(""); // if the file does not exist, create a new empty buffer
-        setStatus(buf, "New file: " + path); // set the status message
+        buf.isNew = true;
         return true; // return true to indicate success
     }
     std::ifstream file(path);
@@ -30,7 +30,7 @@ bool loadFile(Buffer& buf, const std::string& path) {
         buf.lines.push_back(""); // if the file is empty, add an empty line to the vector
     }
 
-
+    buf.isNew = false;
     return true; // return true to indicate success
 }
 
@@ -79,11 +79,6 @@ bool saveFile(Buffer& buf,const std::string& path) {
     return true;
 }
 
-void setStatus(Buffer& buf, const std::string& msg) {
-    buf.status = msg;
-    buf.statusTime = std::time(nullptr); // set the status time to the current time
-}
-
 void moveUp(Buffer& buf) {
     if (buf.cursor.row > 0) {
         buf.cursor.row--;
@@ -117,15 +112,6 @@ void moveRight(Buffer& buf) {
     } else if (buf.cursor.row < buf.lines.size() - 1) {
         buf.cursor.row++;
         buf.cursor.col = 0; // Move cursor to the beginning of the next line
-    }
-}
-
-
-void scroll(Buffer& buf, size_t textRows) {
-    if (buf.cursor.row < buf.rowOffset) {
-        buf.rowOffset = buf.cursor.row; // Scroll up
-    } else if (buf.cursor.row >= buf.rowOffset + textRows) {
-        buf.rowOffset = buf.cursor.row - textRows + 1; // Scroll down
     }
 }
 

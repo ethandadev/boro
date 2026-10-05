@@ -9,6 +9,19 @@
 #include <sys/ioctl.h> // for ioctl, winsize
 #include <ctime> // for time_t
 
+void setStatus(TerminalView& view, const std::string& msg) {
+    view.status = msg;
+    view.statusTime = std::time(nullptr); // set the status time to the current time
+}
+
+void scroll(TerminalView& view, const Buffer& buf, size_t textRows) {
+    if (buf.cursor.row < view.rowOffset) {
+        view.rowOffset = buf.cursor.row; // Scroll up
+    } else if (buf.cursor.row >= view.rowOffset + textRows) {
+        view.rowOffset = buf.cursor.row - textRows + 1; // Scroll down
+    }
+}
+
 size_t getScreenRows() {
     winsize ws;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws); // ioctl is used to get the window size
@@ -34,7 +47,7 @@ void disableRawMode() {
     std::cout << "\x1b[?1049l";   // switch back to normal screen
 }
 
-void render(const Buffer& buf) {
+void render(const Buffer& buf, const TerminalView& view) {
     size_t screenRows = getScreenRows() - 2; // get the available rows in the terminal, minus 2 for the status bar and title bar
 
     std::cout << "\x1b[2J"; // clear the screen
@@ -49,7 +62,7 @@ void render(const Buffer& buf) {
     size_t gutterWidth = std::to_string(lineCount).size(); // variable to store the highest digit in the line numbers
 
     for (size_t  i = 0; i < screenRows; i++) { // for loop to iterate through the lines, start, keep going while, after each round
-        size_t fileLine = i + buf.rowOffset;
+        size_t fileLine = i + view.rowOffset;
         if (fileLine >= buf.lines.size()) {
             break;
         }
@@ -58,13 +71,13 @@ void render(const Buffer& buf) {
 
     std::cout << "\x1b[" << screenRows + 2 << ";1H";
     time_t currentTime = std::time(nullptr); // get the current time
-    if (!buf.status.empty() && (currentTime - buf.statusTime) < 3) {
-        std::cout << buf.status; // status message will be displayed for 3 seconds
+    if (!view.status.empty() && (currentTime - view.statusTime) < 3) {
+        std::cout << view.status; // status message will be displayed for 3 seconds
     } else {
         std::cout << "Ctrl+S to save | Ctrl+Q to quit"; // default status message
     }
 
-    std::cout << "\x1b[" << buf.cursor.row - buf.rowOffset + 2 << ";" << buf.cursor.col + gutterWidth + 3 + 1 << "H";
+    std::cout << "\x1b[" << buf.cursor.row - view.rowOffset + 2 << ";" << buf.cursor.col + gutterWidth + 3 + 1 << "H";
 
     std::cout << std::flush;   // send everything to the terminal NOW
 }
