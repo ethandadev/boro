@@ -1,12 +1,13 @@
 CXX = clang++
-CXXFLAGS = -std=c++20 -Wall -Wextra -g
-SRC = $(wildcard src/*.cpp)
-HDR = $(wildcard src/*.hpp)
-FILE ?= src/main.cpp
+CXXFLAGS = -std=c++20 -Wall -Wextra -g -Isrc/core                       # CHANGED: -Isrc/core
+RELFLAGS = -std=c++20 -Wall -Wextra -O2 -Isrc/core                      # NEW: shared release flags
+SRC = $(wildcard src/core/*.cpp) $(wildcard src/terminal/*.cpp)          # CHANGED
+HDR = $(wildcard src/core/*.hpp) $(wildcard src/terminal/*.hpp)          # CHANGED
+FILE ?= src/terminal/main.cpp                                            # CHANGED
 BUILD = build-terminal
 
 # read the version straight from config.hpp, so it's only defined in one place
-VERSION := $(shell sed -n 's/.*VERSION *= *"\([^"]*\)".*/\1/p' src/config.hpp)
+VERSION := $(shell sed -n 's/.*VERSION *= *"\([^"]*\)".*/\1/p' src/core/config.hpp)   # CHANGED path
 
 APP_CERT       = Developer ID Application: Beyond Diamond Limited (92JK43YAHC)
 INSTALL_CERT   = Developer ID Installer: Beyond Diamond Limited (92JK43YAHC)
@@ -23,14 +24,14 @@ run: $(BUILD)/boro
 
 release: $(SRC) $(HDR)
 	mkdir -p $(BUILD)
-	$(CXX) -std=c++20 -Wall -Wextra -O2 $(SRC) -o $(BUILD)/boro
+	$(CXX) $(RELFLAGS) $(SRC) -o $(BUILD)/boro
 
 install: release
 	cp $(BUILD)/boro /usr/local/bin/boro
 
 universal: $(SRC) $(HDR)
 	mkdir -p $(BUILD)
-	$(CXX) -std=c++20 -Wall -Wextra -O2 -arch arm64 -arch x86_64 -mmacosx-version-min=11.0 $(SRC) -o $(BUILD)/boro
+	$(CXX) $(RELFLAGS) -arch arm64 -arch x86_64 -mmacosx-version-min=11.0 $(SRC) -o $(BUILD)/boro
 
 pkg: universal
 	codesign --force --sign "$(APP_CERT)" --options runtime --timestamp $(BUILD)/boro
@@ -42,7 +43,13 @@ pkg: universal
 	xcrun notarytool submit $(PKG) --keychain-profile "$(NOTARY_PROFILE)" --wait
 	xcrun stapler staple $(PKG)
 
-clean:
-	rm -rf $(BUILD)
+# NEW: build and launch the Qt version
+gui:
+	cmake -B build -DCMAKE_PREFIX_PATH=$$(brew --prefix qt)
+	cmake --build build
+	./build/boro-gui
 
-.PHONY: run release install universal pkg clean
+clean:
+	rm -rf $(BUILD) build
+
+.PHONY: run release install universal pkg gui clean

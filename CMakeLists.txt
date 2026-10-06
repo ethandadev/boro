@@ -8,6 +8,9 @@ project(boro_gui LANGUAGES CXX)
 # Use C++20 — same as -std=c++20 in your Makefile.
 set(CMAKE_CXX_STANDARD 20)
 
+# NEW: write build/compile_commands.json so clangd knows where Qt's headers are
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Find the installed Qt 6 and load its Widgets module.
 # REQUIRED = stop with an error if Qt can't be found.
 # This is how CMake learns where Qt's headers and libraries live on your Mac.
@@ -19,9 +22,15 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets)
 qt_standard_project_setup()
 
 # Create a program called "boro-gui" built from these source files.
-# Like the `-o boro` + list of .cpp files in your Makefile.
+# CHANGED: new paths, and buffer.cpp is shared with the terminal version.
 # When you add more .cpp files later, they get listed here.
-qt_add_executable(boro-gui gui/main.cpp)
+qt_add_executable(boro-gui
+    src/gui/main.cpp
+    src/core/buffer.cpp
+)
+
+# NEW: let gui files write #include "buffer.hpp" even though it lives in src/core/
+target_include_directories(boro-gui PRIVATE src/core)
 
 # Link the Qt Widgets library into boro-gui, so the compiler finds
 # <QApplication>/<QWidget> and the linker finds their actual code.
