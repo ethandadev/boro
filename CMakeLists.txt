@@ -1,3 +1,5 @@
+#CMakeLists.txt
+
 # The oldest CMake version this file works with. If someone's CMake is older,
 # it stops with a clear error instead of failing in a confusing way.
 cmake_minimum_required(VERSION 3.21)
@@ -30,8 +32,14 @@ qt_add_executable(boro-gui
     src/core/buffer.cpp
 )
 
+qt_add_resources(boro-gui "fonts"
+    PREFIX "/"
+    FILES resources/fonts/JetBrainsMono-Regular.ttf
+)
+
 # NEW: let gui files write #include "buffer.hpp" even though it lives in src/core/
 target_include_directories(boro-gui PRIVATE src/core)
+
 
 # Link the Qt Widgets library into boro-gui, so the compiler finds
 # <QApplication>/<QWidget> and the linker finds their actual code.

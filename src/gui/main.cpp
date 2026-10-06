@@ -1,12 +1,20 @@
 #include <QApplication>
+#include <QFontDatabase>
 #include "editor.hpp"
+#include "buffer.hpp"
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);   // the app itself (one per program)
 
+    QFontDatabase::addApplicationFont(":/resources/fonts/JetBrainsMono-Regular.ttf");
+    
     Editor window;                  // our editor, shown as the window
     window.setWindowTitle("Boro");
     window.resize(900, 600);
+
+
+    loadFile(window.buf, "src/core/buffer.cpp");
+
     window.show();
 
     return app.exec();              // hand control to Qt's event loop
