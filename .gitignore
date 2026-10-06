@@ -3,6 +3,7 @@ boro
 viewer
 *.o
 build/
+build-terminal/
 *.dSYM/
 *.pkg
 pkgroot

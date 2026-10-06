@@ -3,7 +3,7 @@ CXXFLAGS = -std=c++20 -Wall -Wextra -g
 SRC = $(wildcard src/*.cpp)
 HDR = $(wildcard src/*.hpp)
 FILE ?= src/main.cpp
-BUILD = build
+BUILD = build-terminal
 
 # read the version straight from config.hpp, so it's only defined in one place
 VERSION := $(shell sed -n 's/.*VERSION *= *"\([^"]*\)".*/\1/p' src/config.hpp)
