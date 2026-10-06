@@ -26,6 +26,7 @@ qt_standard_project_setup()
 # When you add more .cpp files later, they get listed here.
 qt_add_executable(boro-gui
     src/gui/main.cpp
+    src/gui/editor.cpp
     src/core/buffer.cpp
 )
 
