@@ -18,6 +18,8 @@ Editor::Editor(QWidget* parent) : QWidget(parent) {
 
 void Editor::paintEvent(QPaintEvent*) {
     QPainter painter(this);              // a "pen" for drawing on this widget
+    painter.fillRect(rect(), QColor(255, 255, 255)); // fill the background with white
+    painter.setPen(QColor(0, 0, 0)); // set the pen color to black
 
     int lineHeight = fontMetrics().height();
     int charWidth = fontMetrics().horizontalAdvance('0');
@@ -26,16 +28,21 @@ void Editor::paintEvent(QPaintEvent*) {
 
     size_t gutterDigits = std::to_string(lineCount).size(); // variable to store the highest digit in the line numbers
 
-    size_t gutterWidth = (int(gutterDigits) + 2) * charWidth;
+    size_t gutterWidth = (int(gutterDigits) + 3) * charWidth;
+
+    int dividerX = gutterWidth - charWidth;
+
+    painter.fillRect(0, 0, gutterWidth - charWidth, height(), QColor(250, 250, 250));
 
     for (size_t i = 0; i < buf.lines.size(); i++) {
-        int y = (int(i) + 1) * lineHeight;
-        painter.drawText(10, y, QString::number(int(i) + 1));
+        int y = int(i) * lineHeight + fontMetrics().ascent(); 
+        QString num = QString::number(int(i) + 1);
+        int numX = dividerX - charWidth - int(num.length()) * charWidth;
+        painter.drawText(numX, y, num);
         painter.drawText(gutterWidth, y, QString::fromStdString(buf.lines[i]));
     }
 
     //draw divider
-    int dividerX = gutterWidth - charWidth;
     painter.setPen(QColor(80, 80, 80)); //setcolor
     painter.drawLine(dividerX, 0, dividerX, height()); // draw line takes x1, y1, x2, y2
 

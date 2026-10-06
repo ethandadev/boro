@@ -1,10 +1,13 @@
 #include <QApplication>
 #include <QFontDatabase>
+#include <QStyleHints>
 #include "editor.hpp"
 #include "buffer.hpp"
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);   // the app itself (one per program)
+
+    app.styleHints()->setColorScheme(Qt::ColorScheme::Light);   // needs #include <QStyleHints>
 
     QFontDatabase::addApplicationFont(":/resources/fonts/JetBrainsMono-Regular.ttf");
     
