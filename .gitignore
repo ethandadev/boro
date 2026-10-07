@@ -5,8 +5,6 @@ viewer
 build/
 build-terminal/
 *.dSYM/
-*.pkg
-pkgroot
 
 # macOS
 .DS_Store
