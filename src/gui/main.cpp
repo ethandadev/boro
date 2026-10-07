@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
     window.resize(900, 600);
 
 
-    loadFile(window.buf, "src/core/buffer.cpp");
+    loadFile(window.buf, "empty.txt");
 
     window.show();
 

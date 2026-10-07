@@ -16,6 +16,10 @@ Editor::Editor(QWidget* parent) : QWidget(parent) {
     font.setPointSize(FONT_SIZE); // set fontsize
     setFont(font); //set font
     setFocusPolicy(Qt::StrongFocus); // NEW: let this widget receive key presses
+
+    // every time blinkTimer ticks, call this editor's blink()
+    connect(&blinkTimer, &QTimer::timeout, this, &Editor::blink);
+    blinkTimer.start(500); // tick every 500 ms
 }
 
 void Editor::paintEvent(QPaintEvent*) {
@@ -49,13 +53,14 @@ void Editor::paintEvent(QPaintEvent*) {
     painter.drawLine(dividerX, 0, dividerX, height()); // draw line takes x1, y1, x2, y2
 
     //draw cursor
-    std::string line = buf.lines[buf.cursor.row];
-    QString beforeCursor = QString::fromStdString(line.substr(0, buf.cursor.col)); // like line[:col]
-    int cursorX = int(gutterWidth) + fontMetrics().horizontalAdvance(beforeCursor);
-    int cursorTop = int(buf.cursor.row) * lineHeight;
-
     painter.setPen(QColor(0, 0, 0));
-    painter.fillRect(cursorX, cursorTop, 2, lineHeight, QColor(0, 0, 0));
+    if (cursorVisible) {
+        std::string line = buf.lines[buf.cursor.row];
+        QString beforeCursor = QString::fromStdString(line.substr(0, buf.cursor.col)); // like line[:col]
+        int cursorX = int(gutterWidth) + fontMetrics().horizontalAdvance(beforeCursor);
+        int cursorTop = int(buf.cursor.row) * lineHeight;
+        painter.fillRect(cursorX, cursorTop, 2, lineHeight, QColor(0, 0, 0));
+    }
 }
 
 void Editor::keyPressEvent(QKeyEvent* event) {
@@ -64,6 +69,20 @@ void Editor::keyPressEvent(QKeyEvent* event) {
     
     if (key == Qt::Key_Backspace) {
         deleteChar(buf);
+    } else if (key == Qt::Key_Tab) {
+        insertTab(buf);
+    } else if (key == Qt::Key_Up) {
+        moveUp(buf);
+    } else if (key == Qt::Key_Left) {
+        moveLeft(buf);
+    } else if (key == Qt::Key_Right) {
+        moveRight(buf);
+    } else if (key == Qt::Key_Down) {
+        moveDown(buf);
+    } else if (key == Qt::Key_Enter || key == Qt::Key_Return) {
+        insertNewLine(buf);
+    } else if (key == Qt::Key_S && (event -> modifiers() & Qt::ControlModifier)) {
+        saveFile(buf, buf.fileName);
     } else if (!text.isEmpty()) {
         int code = text[0].unicode();
         if (code >= 32 && code <= 126) {
@@ -71,6 +90,17 @@ void Editor::keyPressEvent(QKeyEvent* event) {
         }
     }
 
+    cursorVisible = true;
+    blinkTimer.start(500);
     update(); // ask Qt to call paintEvent again, so the change shows up
+}
+
+void Editor::blink() {
+    cursorVisible = !cursorVisible; // flip: true → false, false → true
+    update();                       // redraw
+}
+
+bool Editor::focusNextPrevChild(bool) {
+    return false;
 }
 
