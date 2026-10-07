@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <string>
+#include <algorithm> // for std::max and std::min
 
 //set font and stuff
 Editor::Editor(QWidget* parent) : QWidget(parent) {
@@ -44,7 +45,7 @@ void Editor::paintEvent(QPaintEvent*) {
     painter.fillRect(0, 0, gutterWidth - charWidth, height(), QColor(250, 250, 250));
 
     for (size_t i = 0; i < buf.lines.size(); i++) {
-        int y = int(i) * lineHeight + fontMetrics().ascent(); 
+        int y = int(i) * lineHeight - scrollY + fontMetrics().ascent();
         QString num = QString::number(int(i) + 1);
         int numX = dividerX - charWidth - int(num.length()) * charWidth;
         painter.drawText(numX, y, num);
@@ -61,7 +62,7 @@ void Editor::paintEvent(QPaintEvent*) {
         std::string line = buf.lines[buf.cursor.row];
         QString beforeCursor = QString::fromStdString(line.substr(0, buf.cursor.col)); // like line[:col]
         int cursorX = int(gutterWidth) + fontMetrics().horizontalAdvance(beforeCursor);
-        int cursorTop = int(buf.cursor.row) * lineHeight;
+        int cursorTop = int(buf.cursor.row) * lineHeight - scrollY;
         painter.fillRect(cursorX, cursorTop, 2, lineHeight, QColor(0, 0, 0));
     }
 }
@@ -106,6 +107,7 @@ void Editor::keyPressEvent(QKeyEvent* event) {
         }
     }
 
+    keepCursorVisible(); // NEW: scroll if needed
     cursorVisible = true;
     blinkTimer.start(500);
     update(); // ask Qt to call paintEvent again, so the change shows up
@@ -120,3 +122,39 @@ bool Editor::focusNextPrevChild(bool) {
     return false;
 }
 
+void Editor::keepCursorVisible() {
+    int lineHeight = fontMetrics().height();
+    int cursorTop = int(buf.cursor.row) * lineHeight;
+    int cursorBottom = cursorTop + lineHeight;
+
+    if (cursorTop < scrollY) {
+        scrollY = cursorTop;
+    } else if (cursorBottom > scrollY + height()) {
+        scrollY = cursorBottom - height();
+    }
+
+    clampScroll();       // NEW: make sure scrollY is within valid range
+}
+
+void Editor::wheelEvent(QWheelEvent* event) {
+    int deltaY;
+    if (!event->pixelDelta().isNull()) {
+        deltaY = event->pixelDelta().y();
+    } else {
+        deltaY = event->angleDelta().y() * 3 * fontMetrics().height() / 120; // 120 is the default angleDelta for one notch
+    }
+
+    scrollY -= deltaY; // subtract because scrolling up should decrease scrollY
+    clampScroll();       // NEW: make sure scrollY is within valid range
+    update();
+}
+
+void Editor::clampScroll() {
+    int lineHeight = fontMetrics().height();
+    int contentHeight = int(buf.lines.size()) * lineHeight;
+    int extra = int(height() * SCROLL_PAST_END);
+    int maxScroll = contentHeight + extra - height();
+
+    scrollY = std::min(scrollY, maxScroll);
+    scrollY = std::max(scrollY, 0); // Ensure scrollY is not negative
+}
