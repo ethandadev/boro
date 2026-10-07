@@ -26,10 +26,17 @@ qt_standard_project_setup()
 # Create a program called "boro-gui" built from these source files.
 # CHANGED: new paths, and buffer.cpp is shared with the terminal version.
 # When you add more .cpp files later, they get listed here.
-qt_add_executable(boro-gui
+qt_add_executable(boro-gui MACOSX_BUNDLE
     src/gui/main.cpp
     src/gui/editor.cpp
     src/core/buffer.cpp
+)
+
+set_target_properties(boro-gui PROPERTIES
+    OUTPUT_NAME "Boro"                                  # the file becomes Boro.app
+    MACOSX_BUNDLE_BUNDLE_NAME "Boro"                    # the name in the menu bar
+    MACOSX_BUNDLE_GUI_IDENTIFIER "com.ethandadev.boro"  # same ID as your pkg
+    MACOSX_BUNDLE_SHORT_VERSION_STRING "0.2.0"          # version shown in "About"
 )
 
 qt_add_resources(boro-gui "fonts"

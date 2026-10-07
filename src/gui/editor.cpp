@@ -24,6 +24,8 @@ Editor::Editor(QWidget* parent) : QWidget(parent) {
     // every time blinkTimer ticks, call this editor's blink()
     connect(&blinkTimer, &QTimer::timeout, this, &Editor::blink);
     blinkTimer.start(500); // tick every 500 ms
+
+    buf.lines.push_back(""); // the editor always has at least one line
 }
 
 void Editor::paintEvent(QPaintEvent*) {
@@ -86,20 +88,9 @@ void Editor::keyPressEvent(QKeyEvent* event) {
     } else if (key == Qt::Key_Enter || key == Qt::Key_Return) {
         insertNewLine(buf);
     } else if (key == Qt::Key_S && (event -> modifiers() & Qt::ControlModifier)) {
-        saveFile(buf, buf.fileName);
+        save();
     } else if (key == Qt::Key_O && (event -> modifiers() & Qt::ControlModifier)) {
-        if (buf.dirty) {
-            auto answer = QMessageBox::question(this, "Unsaved changes", "Discard your changes to this file?");
-            if (answer != QMessageBox::Yes) {
-                return;                         // stop: don't open anything
-            }
-        }
-        QString path = QFileDialog::getOpenFileName(this, "Open File");   // empty if you pressed cancel
-        if (!path.isEmpty()) {                                   // only if a file was actually picked
-            buf = Buffer();                   // throw away the old file, start fresh
-            loadFile(buf, path.toStdString());
-            window()->setWindowTitle("Boro — " + path);
-        }
+        openFile();
     } else if (!text.isEmpty()) {
         int code = text[0].unicode();
         if (code >= 32 && code <= 126) {
@@ -107,7 +98,7 @@ void Editor::keyPressEvent(QKeyEvent* event) {
         }
     }
 
-    keepCursorVisible(); // NEW: scroll if needed
+    keepCursorVisible(); // scroll if needed
     cursorVisible = true;
     blinkTimer.start(500);
     update(); // ask Qt to call paintEvent again, so the change shows up
@@ -157,4 +148,31 @@ void Editor::clampScroll() {
 
     scrollY = std::min(scrollY, maxScroll);
     scrollY = std::max(scrollY, 0); // Ensure scrollY is not negative
+}
+
+void Editor::openFile() {
+    if (!confirmDiscard()) {
+            return; // user chose not to discard changes
+    }
+    QString path = QFileDialog::getOpenFileName(this, "Open File");   // empty if you pressed cancel
+    if (!path.isEmpty()) {                                   // only if a file was actually picked
+        buf = Buffer();                   // throw away the old file, start fresh
+        loadFile(buf, path.toStdString());
+        window()->setWindowTitle("Boro — " + path);
+        scrollY = 0; // reset scroll position
+        update();    // redraw the editor with the new file
+    }
+
+}
+
+bool Editor::confirmDiscard() {
+    if (!buf.dirty) {
+        return true; // no unsaved changes, safe to discard
+    }
+    auto answer = QMessageBox::question(this, "Unsaved changes", "Discard your changes to this file?");
+    return answer == QMessageBox::Yes;
+}
+
+void Editor::save() {
+    saveFile(buf, buf.fileName);
 }

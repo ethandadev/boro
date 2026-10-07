@@ -43,11 +43,11 @@ pkg: universal
 	xcrun notarytool submit $(PKG) --keychain-profile "$(NOTARY_PROFILE)" --wait
 	xcrun stapler staple $(PKG)
 
-# NEW: build and launch the Qt version
+# build and launch the Qt version
 gui:
 	cmake -B build -DCMAKE_PREFIX_PATH=$$(brew --prefix qt)
 	cmake --build build
-	./build/boro-gui
+		./build/Boro.app/Contents/MacOS/Boro
 
 clean:
 	rm -rf $(BUILD) build

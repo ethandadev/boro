@@ -13,12 +13,11 @@ int main(int argc, char* argv[]) {
     QFontDatabase::addApplicationFont(":/resources/fonts/JetBrainsMono-Regular.ttf");
     
     Editor window;                  // our editor, shown as the window
-    window.setWindowTitle("Boro");
+    window.setWindowTitle("Boro - Untitled"); // set the window title
     window.resize(900, 600);
 
-
-    loadFile(window.buf, "empty.txt");
-
+    window.openFile(); // open a file dialog to select a file to open
+    
     window.show();
 
     return app.exec();              // hand control to Qt's event loop

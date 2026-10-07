@@ -8,18 +8,21 @@ class Editor : public QWidget {
 public:
     Editor(QWidget* parent = nullptr);
     Buffer buf;                // buffer, same as terminal version
+    void openFile(); // NEW
+    void save();    // NEW
 
 private:
     bool cursorVisible = true;
     QTimer blinkTimer;
-    int scrollY = 0;                 // NEW: how far down the text is scrolled
+    int scrollY = 0;                 // how far down the text is scrolled
     void keepCursorVisible();
-    void clampScroll(); // NEW: make sure scrollY is within valid range
+    void clampScroll(); // make sure scrollY is within valid range
+    bool confirmDiscard(); // NEW
 
 protected:
     void paintEvent(QPaintEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override; 
     void blink();
-    void wheelEvent(QWheelEvent* event) override; // NEW: handle mouse wheel scrolling
+    void wheelEvent(QWheelEvent* event) override; // handle mouse wheel scrolling
     bool focusNextPrevChild(bool next) override;
 };
