@@ -1,3 +1,4 @@
+//src/gui/main.cpp
 #include <QApplication>
 #include <QFontDatabase>
 #include <QStyleHints>

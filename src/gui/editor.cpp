@@ -1,3 +1,4 @@
+//src/gui/editor.cpp
 #include "editor.hpp"
 #include "config.hpp"
 #include <QPainter>
@@ -5,6 +6,7 @@
 #include <QColor>
 #include <QKeyEvent>
 #include <QFileDialog>
+#include <QMessageBox>
 #include <string>
 
 //set font and stuff
@@ -85,7 +87,13 @@ void Editor::keyPressEvent(QKeyEvent* event) {
     } else if (key == Qt::Key_S && (event -> modifiers() & Qt::ControlModifier)) {
         saveFile(buf, buf.fileName);
     } else if (key == Qt::Key_O && (event -> modifiers() & Qt::ControlModifier)) {
-        QString path = QFileDialog::getOpenFileName(this, "Open File")[0];   // "" if you pressed Cancel
+        if (buf.dirty) {
+            auto answer = QMessageBox::question(this, "Unsaved changes", "Discard your changes to this file?");
+            if (answer != QMessageBox::Yes) {
+                return;                         // stop: don't open anything
+            }
+        }
+        QString path = QFileDialog::getOpenFileName(this, "Open File");   // empty if you pressed cancel
         if (!path.isEmpty()) {                                   // only if a file was actually picked
             buf = Buffer();                   // throw away the old file, start fresh
             loadFile(buf, path.toStdString());
