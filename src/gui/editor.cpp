@@ -4,6 +4,7 @@
 #include <QFont>
 #include <QColor>
 #include <QKeyEvent>
+#include <QFileDialog>
 #include <string>
 
 //set font and stuff
@@ -83,6 +84,13 @@ void Editor::keyPressEvent(QKeyEvent* event) {
         insertNewLine(buf);
     } else if (key == Qt::Key_S && (event -> modifiers() & Qt::ControlModifier)) {
         saveFile(buf, buf.fileName);
+    } else if (key == Qt::Key_O && (event -> modifiers() & Qt::ControlModifier)) {
+        QString path = QFileDialog::getOpenFileName(this, "Open File")[0];   // "" if you pressed Cancel
+        if (!path.isEmpty()) {                                   // only if a file was actually picked
+            buf = Buffer();                   // throw away the old file, start fresh
+            loadFile(buf, path.toStdString());
+            window()->setWindowTitle("Boro — " + path);
+        }
     } else if (!text.isEmpty()) {
         int code = text[0].unicode();
         if (code >= 32 && code <= 126) {
