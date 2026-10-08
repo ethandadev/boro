@@ -17,7 +17,8 @@ private:
     int scrollY = 0;                 // how far down the text is scrolled
     void keepCursorVisible();
     void clampScroll(); // make sure scrollY is within valid range
-    bool confirmDiscard(); // NEW
+    bool confirmDiscard(); 
+    void newFile();
 
 protected:
     void paintEvent(QPaintEvent* event) override;

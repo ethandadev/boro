@@ -91,12 +91,14 @@ void Editor::keyPressEvent(QKeyEvent* event) {
         save();
     } else if (key == Qt::Key_O && (event -> modifiers() & Qt::ControlModifier)) {
         openFile();
+    } else if (key == Qt::Key_N && (event -> modifiers() & Qt::ControlModifier)) {
+        newFile();
     } else if (!text.isEmpty()) {
         int code = text[0].unicode();
         if (code >= 32 && code <= 126) {
             insertChar(buf, char(code));
         }
-    }
+    } 
 
     keepCursorVisible(); // scroll if needed
     cursorVisible = true;
@@ -174,5 +176,25 @@ bool Editor::confirmDiscard() {
 }
 
 void Editor::save() {
+    if (buf.fileName.empty()) {
+        QString path = QFileDialog::getSaveFileName(this, "Save File");
+        if (path.isEmpty()) {
+            return;
+        }
+        buf.fileName = path.toStdString();
+        window() -> setWindowTitle("Boro - " + path);
+    }
     saveFile(buf, buf.fileName);
+    update();
+}
+
+void Editor::newFile() {
+    if (!confirmDiscard()) {
+        return;
+    }
+    buf = Buffer();
+    buf.lines.push_back("");
+    scrollY = 0;
+    window() -> setWindowTitle("Boro - Untitled");
+    update();
 }
