@@ -18,7 +18,8 @@ private:
     int scrollY = 0;                 // how far down the text is scrolled
     void keepCursorVisible();
     void clampScroll(); // make sure scrollY is within valid range
-    bool confirmDiscard(); 
+    bool confirmDiscard();
+    int textLeft();
 
 protected:
     void paintEvent(QPaintEvent* event) override;
@@ -26,4 +27,5 @@ protected:
     void blink();
     void wheelEvent(QWheelEvent* event) override; // handle mouse wheel scrolling
     bool focusNextPrevChild(bool next) override;
+    void mousePressEvent(QMouseEvent* event) override;
 };

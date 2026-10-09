@@ -7,6 +7,7 @@
 #include <QKeyEvent>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QMouseEvent>
 #include <string>
 #include <algorithm> // for std::max and std::min
 
@@ -36,15 +37,11 @@ void Editor::paintEvent(QPaintEvent*) {
     int lineHeight = fontMetrics().height();
     int charWidth = fontMetrics().horizontalAdvance('0');
 
-    size_t lineCount = buf.lines.size(); // size_t is an unsigned integer type used for sizes
-
-    size_t gutterDigits = std::to_string(lineCount).size(); // variable to store the highest digit in the line numbers
-
-    size_t gutterWidth = (int(gutterDigits) + 3) * charWidth;
+    int gutterWidth = textLeft();
 
     int dividerX = gutterWidth - charWidth;
 
-    painter.fillRect(0, 0, gutterWidth - charWidth, height(), QColor(250, 250, 250));
+    painter.fillRect(0, 0, dividerX, height(), QColor(250, 250, 250));
 
     for (size_t i = 0; i < buf.lines.size(); i++) {
         int y = int(i) * lineHeight - scrollY + fontMetrics().ascent();
@@ -63,7 +60,7 @@ void Editor::paintEvent(QPaintEvent*) {
     if (cursorVisible) {
         std::string line = buf.lines[buf.cursor.row];
         QString beforeCursor = QString::fromStdString(line.substr(0, buf.cursor.col)); // like line[:col]
-        int cursorX = int(gutterWidth) + fontMetrics().horizontalAdvance(beforeCursor);
+        int cursorX = gutterWidth + fontMetrics().horizontalAdvance(beforeCursor);
         int cursorTop = int(buf.cursor.row) * lineHeight - scrollY;
         painter.fillRect(cursorX, cursorTop, 2, lineHeight, QColor(0, 0, 0));
     }
@@ -190,5 +187,22 @@ void Editor::newFile() {
     buf.lines.push_back("");
     scrollY = 0;
     window() -> setWindowTitle("Boro - Untitled");
+    update();
+}
+
+int Editor::textLeft() {
+    int charWidth = fontMetrics().horizontalAdvance('0');
+    int digits = std::to_string(buf.lines.size()).size();
+    return (digits + 3) * charWidth;
+}
+
+void Editor::mousePressEvent(QMouseEvent* event) {
+    int lineHeight = fontMetrics().height();
+    int y = int(event->position().y());
+    int row = (y + scrollY) / lineHeight;
+    row = std::min(row, int(buf.lines.size())-1);
+    buf.cursor.row = row;
+    buf.cursor.col = std::min(buf.cursor.col, buf.lines[row].length());
+
     update();
 }
