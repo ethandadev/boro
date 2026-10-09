@@ -8,7 +8,6 @@
 #include <QAction>
 #include <QKeySequence>
 #include "editor.hpp"
-#include "buffer.hpp"
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);   // the app itself (one per program)
