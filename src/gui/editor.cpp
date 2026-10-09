@@ -27,6 +27,8 @@ Editor::Editor(QWidget* parent) : QWidget(parent) {
     blinkTimer.start(500); // tick every 500 ms
 
     buf.lines.push_back(""); // the editor always has at least one line
+
+    setCursor(Qt::IBeamCursor); // show the text-editing mouse pointer over the editor
 }
 
 void Editor::paintEvent(QPaintEvent*) {
@@ -202,7 +204,23 @@ void Editor::mousePressEvent(QMouseEvent* event) {
     int row = (y + scrollY) / lineHeight;
     row = std::min(row, int(buf.lines.size())-1);
     buf.cursor.row = row;
-    buf.cursor.col = std::min(buf.cursor.col, buf.lines[row].length());
+    int x = int(event->position().x()) - textLeft();
+    QString line = QString::fromStdString(buf.lines[row]);
 
+    int col = 0;
+    while (col < line.length()) {
+        int left = fontMetrics().horizontalAdvance(line.left(col));
+        int right = fontMetrics().horizontalAdvance(line.left(col+1));
+        if (x < (left+right) / 2) {
+            break;
+        }
+        col++;
+    }
+
+    buf.cursor.col = col;
+
+    cursorVisible = true;
+    blinkTimer.start(500);
+    
     update();
 }
