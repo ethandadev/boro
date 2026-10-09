@@ -87,12 +87,6 @@ void Editor::keyPressEvent(QKeyEvent* event) {
         moveDown(buf);
     } else if (key == Qt::Key_Enter || key == Qt::Key_Return) {
         insertNewLine(buf);
-    } else if (key == Qt::Key_S && (event -> modifiers() & Qt::ControlModifier)) {
-        save();
-    } else if (key == Qt::Key_O && (event -> modifiers() & Qt::ControlModifier)) {
-        openFile();
-    } else if (key == Qt::Key_N && (event -> modifiers() & Qt::ControlModifier)) {
-        newFile();
     } else if (!text.isEmpty()) {
         int code = text[0].unicode();
         if (code >= 32 && code <= 126) {

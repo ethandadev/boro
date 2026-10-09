@@ -10,6 +10,7 @@ public:
     Buffer buf;                // buffer, same as terminal version
     void openFile(); // NEW
     void save();    // NEW
+    void newFile();
 
 private:
     bool cursorVisible = true;
@@ -18,7 +19,6 @@ private:
     void keepCursorVisible();
     void clampScroll(); // make sure scrollY is within valid range
     bool confirmDiscard(); 
-    void newFile();
 
 protected:
     void paintEvent(QPaintEvent* event) override;
