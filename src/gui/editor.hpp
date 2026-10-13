@@ -8,8 +8,8 @@ class Editor : public QWidget {
 public:
     Editor(QWidget* parent = nullptr);
     Buffer buf;                // buffer, same as terminal version
-    void openFile(); // NEW
-    void save();    // NEW
+    void openFile(); 
+    void save();    
     void newFile();
 
 private:
@@ -20,6 +20,8 @@ private:
     void clampScroll(); // make sure scrollY is within valid range
     bool confirmDiscard();
     int textLeft();
+    Cursor positionAt(int x, int y);
+    Cursor anchor;
 
 protected:
     void paintEvent(QPaintEvent* event) override;
@@ -28,4 +30,5 @@ protected:
     void wheelEvent(QWheelEvent* event) override; // handle mouse wheel scrolling
     bool focusNextPrevChild(bool next) override;
     void mousePressEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
 };

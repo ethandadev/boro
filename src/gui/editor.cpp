@@ -39,12 +39,34 @@ void Editor::paintEvent(QPaintEvent*) {
     int lineHeight = fontMetrics().height();
     int charWidth = fontMetrics().horizontalAdvance('0');
 
-    int gutterWidth = textLeft();
+    int gutterWidth = textLeft(); // space reserved for line numbers on the left
 
     int dividerX = gutterWidth - charWidth;
 
-    painter.fillRect(0, 0, dividerX, height(), QColor(250, 250, 250));
+    painter.fillRect(0, 0, dividerX, height(), QColor(250, 250, 250)); // gutter background
 
+    Cursor start = anchor;
+    Cursor end = buf.cursor;
+    if (end.row < start.row || (end.row == start.row && end.col < start.col)) {
+        std::swap(start, end);
+    }
+
+    for (size_t row = start.row; row <= end.row; row++) {
+        QString line = QString::fromStdString(buf.lines[row]);
+        size_t fromCol = (row == start.row) ? start.col : 0;
+        size_t toCol = (row == end.row) ? end.col : line.size();
+
+        int x1 = gutterWidth + fontMetrics().horizontalAdvance(line.left(int(fromCol)));
+        int x2 = gutterWidth + fontMetrics().horizontalAdvance(line.left(int(toCol)));
+        if (row != end.row) {
+            x2 += charWidth;
+        }
+
+        int top = row * lineHeight - scrollY;
+        painter.fillRect(x1, top, x2 - x1, lineHeight, QColor(173, 214, 255));
+    }
+
+    // loop through all lines and draw both line numbers and text contents
     for (size_t i = 0; i < buf.lines.size(); i++) {
         int y = int(i) * lineHeight - scrollY + fontMetrics().ascent();
         QString num = QString::number(int(i) + 1);
@@ -64,14 +86,18 @@ void Editor::paintEvent(QPaintEvent*) {
         QString beforeCursor = QString::fromStdString(line.substr(0, buf.cursor.col)); // like line[:col]
         int cursorX = gutterWidth + fontMetrics().horizontalAdvance(beforeCursor);
         int cursorTop = int(buf.cursor.row) * lineHeight - scrollY;
-        painter.fillRect(cursorX, cursorTop, 2, lineHeight, QColor(0, 0, 0));
+        painter.fillRect(cursorX, cursorTop, 2, lineHeight, QColor(0, 0, 0)); // draw blinking cursor bar
     }
 }
 
 void Editor::keyPressEvent(QKeyEvent* event) {
     int key = event->key();
     QString text = event->text();
+    bool shift = event->modifiers() & Qt::ShiftModifier;
+    bool isArrow = (key == Qt::Key_Up || key == Qt::Key_Down || key == Qt::Key_Left || key == Qt::Key_Right);
     
+    
+    // map incoming keyboard keys to buffer editing actions
     if (key == Qt::Key_Backspace) {
         deleteChar(buf);
     } else if (key == Qt::Key_Tab) {
@@ -89,13 +115,17 @@ void Editor::keyPressEvent(QKeyEvent* event) {
     } else if (!text.isEmpty()) {
         int code = text[0].unicode();
         if (code >= 32 && code <= 126) {
-            insertChar(buf, char(code));
+            insertChar(buf, char(code)); // regular printable characters
         }
     } 
 
+    if (!(shift && isArrow)) {
+        anchor = buf.cursor;
+    }
+
     keepCursorVisible(); // scroll if needed
-    cursorVisible = true;
-    blinkTimer.start(500);
+    cursorVisible = true; // keep cursor solid while typing
+    blinkTimer.start(500); // reset blink timer
     update(); // ask Qt to call paintEvent again, so the change shows up
 }
 
@@ -105,7 +135,7 @@ void Editor::blink() {
 }
 
 bool Editor::focusNextPrevChild(bool) {
-    return false;
+    return false; // capture tab key presses instead of letting focus jump away
 }
 
 void Editor::keepCursorVisible() {
@@ -113,6 +143,7 @@ void Editor::keepCursorVisible() {
     int cursorTop = int(buf.cursor.row) * lineHeight;
     int cursorBottom = cursorTop + lineHeight;
 
+    // auto-scroll up or down if the cursor goes out of view bounds
     if (cursorTop < scrollY) {
         scrollY = cursorTop;
     } else if (cursorBottom > scrollY + height()) {
@@ -125,7 +156,7 @@ void Editor::keepCursorVisible() {
 void Editor::wheelEvent(QWheelEvent* event) {
     int deltaY;
     if (!event->pixelDelta().isNull()) {
-        deltaY = event->pixelDelta().y();
+        deltaY = event->pixelDelta().y(); // smooth trackpad scrolling
     } else {
         deltaY = event->angleDelta().y() * 3 * fontMetrics().height() / 120; // 120 is the default angleDelta for one notch
     }
@@ -152,6 +183,7 @@ void Editor::openFile() {
     QString path = QFileDialog::getOpenFileName(this, "Open File");   // empty if you pressed cancel
     if (!path.isEmpty()) {                                   // only if a file was actually picked
         buf = Buffer();                   // throw away the old file, start fresh
+        anchor = buf.cursor;
         loadFile(buf, path.toStdString());
         window()->setWindowTitle("Boro — " + path);
         scrollY = 0; // reset scroll position
@@ -165,14 +197,14 @@ bool Editor::confirmDiscard() {
         return true; // no unsaved changes, safe to discard
     }
     auto answer = QMessageBox::question(this, "Unsaved changes", "Discard your changes to this file?");
-    return answer == QMessageBox::Yes;
+    return answer == QMessageBox::Yes; // prompt user if closing with dirty buffer
 }
 
 void Editor::save() {
     if (buf.fileName.empty()) {
         QString path = QFileDialog::getSaveFileName(this, "Save File");
         if (path.isEmpty()) {
-            return;
+            return; // cancelled save dialog
         }
         buf.fileName = path.toStdString();
         window() -> setWindowTitle("Boro - " + path);
@@ -183,9 +215,10 @@ void Editor::save() {
 
 void Editor::newFile() {
     if (!confirmDiscard()) {
-        return;
+        return; // user cancelled new file action
     }
     buf = Buffer();
+    anchor = buf.cursor;
     buf.lines.push_back("");
     scrollY = 0;
     window() -> setWindowTitle("Boro - Untitled");
@@ -195,32 +228,47 @@ void Editor::newFile() {
 int Editor::textLeft() {
     int charWidth = fontMetrics().horizontalAdvance('0');
     int digits = std::to_string(buf.lines.size()).size();
-    return (digits + 3) * charWidth;
+    return (digits + 3) * charWidth; // compute dynamic gutter width based on line count
 }
 
 void Editor::mousePressEvent(QMouseEvent* event) {
+    Cursor pos = positionAt(int(event->position().x()), int(event->position().y()));
+    buf.cursor = pos;
+    anchor = pos; // update text cursor position on click
+
+    cursorVisible = true;
+    blinkTimer.start(500);
+
+    update();
+}
+
+Cursor Editor::positionAt(int x, int y) {
     int lineHeight = fontMetrics().height();
-    int y = int(event->position().y());
     int row = (y + scrollY) / lineHeight;
     row = std::min(row, int(buf.lines.size())-1);
-    buf.cursor.row = row;
-    int x = int(event->position().x()) - textLeft();
+    row = std::max(row, 0);
     QString line = QString::fromStdString(buf.lines[row]);
 
     int col = 0;
+
+    int textX = x - textLeft();   // pixels from where the text starts
+    // figure out which character column was clicked by checking character widths
     while (col < line.length()) {
         int left = fontMetrics().horizontalAdvance(line.left(col));
         int right = fontMetrics().horizontalAdvance(line.left(col+1));
-        if (x < (left+right) / 2) {
+        if (textX < (left+right) / 2) {
             break;
         }
         col++;
     }
 
-    buf.cursor.col = col;
+    return Cursor(row, col);
+}
 
+void Editor::mouseMoveEvent(QMouseEvent* event) {
+    buf.cursor = positionAt(int(event->position().x()), int(event->position().y())); // update cursor while dragging mouse
+    keepCursorVisible();
     cursorVisible = true;
     blinkTimer.start(500);
-    
     update();
 }
