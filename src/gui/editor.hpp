@@ -22,6 +22,7 @@ private:
     int textLeft();
     Cursor positionAt(int x, int y);
     Cursor anchor;
+    void resetBlink();
 
 protected:
     void paintEvent(QPaintEvent* event) override;

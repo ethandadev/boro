@@ -24,7 +24,7 @@ Editor::Editor(QWidget* parent) : QWidget(parent) {
 
     // every time blinkTimer ticks, call this editor's blink()
     connect(&blinkTimer, &QTimer::timeout, this, &Editor::blink);
-    blinkTimer.start(500); // tick every 500 ms
+    resetBlink();
 
     buf.lines.push_back(""); // the editor always has at least one line
 
@@ -62,7 +62,7 @@ void Editor::paintEvent(QPaintEvent*) {
             x2 += charWidth;
         }
 
-        int top = row * lineHeight - scrollY;
+        int top = int(row) * lineHeight - scrollY;
         painter.fillRect(x1, top, x2 - x1, lineHeight, QColor(173, 214, 255));
     }
 
@@ -124,8 +124,7 @@ void Editor::keyPressEvent(QKeyEvent* event) {
     }
 
     keepCursorVisible(); // scroll if needed
-    cursorVisible = true; // keep cursor solid while typing
-    blinkTimer.start(500); // reset blink timer
+    resetBlink();
     update(); // ask Qt to call paintEvent again, so the change shows up
 }
 
@@ -236,8 +235,7 @@ void Editor::mousePressEvent(QMouseEvent* event) {
     buf.cursor = pos;
     anchor = pos; // update text cursor position on click
 
-    cursorVisible = true;
-    blinkTimer.start(500);
+    resetBlink();
 
     update();
 }
@@ -268,7 +266,11 @@ Cursor Editor::positionAt(int x, int y) {
 void Editor::mouseMoveEvent(QMouseEvent* event) {
     buf.cursor = positionAt(int(event->position().x()), int(event->position().y())); // update cursor while dragging mouse
     keepCursorVisible();
+    resetBlink();
+    update();
+}
+
+void Editor::resetBlink() {
     cursorVisible = true;
     blinkTimer.start(500);
-    update();
 }
