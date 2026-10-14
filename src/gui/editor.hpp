@@ -2,6 +2,7 @@
 #pragma once
 #include <QWidget>
 #include <QTimer>
+#include <QPainter>
 #include "buffer.hpp"         
 
 class Editor : public QWidget {
@@ -24,6 +25,10 @@ private:
     Cursor anchor;
     void resetBlink();
     void updateTitle();
+    void drawGutter(QPainter& painter);
+    void drawSelection(QPainter& painter);
+    void drawLines(QPainter& painter);
+    void drawCursor(QPainter& painter);
 
 protected:
     void paintEvent(QPaintEvent* event) override;
