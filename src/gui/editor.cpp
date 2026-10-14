@@ -184,7 +184,7 @@ void Editor::openFile() {
         buf = Buffer();                   // throw away the old file, start fresh
         anchor = buf.cursor;
         loadFile(buf, path.toStdString());
-        window()->setWindowTitle("Boro — " + path);
+        updateTitle();
         scrollY = 0; // reset scroll position
         update();    // redraw the editor with the new file
     }
@@ -206,7 +206,7 @@ void Editor::save() {
             return; // cancelled save dialog
         }
         buf.fileName = path.toStdString();
-        window() -> setWindowTitle("Boro - " + path);
+        updateTitle();
     }
     saveFile(buf, buf.fileName);
     update();
@@ -220,7 +220,7 @@ void Editor::newFile() {
     anchor = buf.cursor;
     buf.lines.push_back("");
     scrollY = 0;
-    window() -> setWindowTitle("Boro - Untitled");
+    updateTitle();
     update();
 }
 
@@ -273,4 +273,9 @@ void Editor::mouseMoveEvent(QMouseEvent* event) {
 void Editor::resetBlink() {
     cursorVisible = true;
     blinkTimer.start(500);
+}
+
+void Editor::updateTitle() {
+    QString name = QString::fromStdString((buf.fileName == "") ? "Untitled" : buf.fileName);
+    window()->setWindowTitle("Boro - " + name);
 }

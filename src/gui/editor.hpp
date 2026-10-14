@@ -23,6 +23,7 @@ private:
     Cursor positionAt(int x, int y);
     Cursor anchor;
     void resetBlink();
+    void updateTitle();
 
 protected:
     void paintEvent(QPaintEvent* event) override;
