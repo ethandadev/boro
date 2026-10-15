@@ -8,3 +8,6 @@ build-terminal/
 
 # macOS
 .DS_Store
+
+# node random stuff
+website/node_modules

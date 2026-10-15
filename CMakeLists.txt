@@ -33,6 +33,7 @@ qt_add_executable(boro-gui MACOSX_BUNDLE
     src/gui/editor/input.cpp
     src/gui/editor/files.cpp
     src/core/buffer.cpp
+    resources/icon/boro.icns
 )
 
 set_target_properties(boro-gui PROPERTIES
@@ -40,7 +41,12 @@ set_target_properties(boro-gui PROPERTIES
     MACOSX_BUNDLE_BUNDLE_NAME "Boro"                    # the name in the menu bar
     MACOSX_BUNDLE_GUI_IDENTIFIER "com.ethandadev.boro"  # same ID as your pkg
     MACOSX_BUNDLE_SHORT_VERSION_STRING "0.2.0"          # version shown in "About"
+    MACOSX_BUNDLE_ICON_FILE boro.icns
 )
+
+# put the icon inside Boro.app/Contents/Resources
+set_source_files_properties(resources/icon/boro.icns PROPERTIES
+    MACOSX_PACKAGE_LOCATION "Resources")
 
 qt_add_resources(boro-gui "fonts"
     PREFIX "/"
