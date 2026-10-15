@@ -1,18 +1,6 @@
 {
-  "name": "website",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "dev": "node --watch server.js"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "dependencies": {
-    "express": "^5.3.0"
-  }
+  "name": "boro-site",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": { "start": "node server.js" }
 }
