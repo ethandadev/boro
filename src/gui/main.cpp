@@ -7,7 +7,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QKeySequence>
-#include "editor.hpp"
+#include "editor/editor.hpp"
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);   // the app itself (one per program)

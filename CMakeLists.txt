@@ -28,7 +28,10 @@ qt_standard_project_setup()
 # When you add more .cpp files later, they get listed here.
 qt_add_executable(boro-gui MACOSX_BUNDLE
     src/gui/main.cpp
-    src/gui/editor.cpp
+    src/gui/editor/editor.cpp
+    src/gui/editor/paint.cpp
+    src/gui/editor/input.cpp
+    src/gui/editor/files.cpp
     src/core/buffer.cpp
 )
 

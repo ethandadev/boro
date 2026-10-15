@@ -235,7 +235,6 @@ void Editor::updateTitle() {
 void Editor::drawCursor(QPainter& painter) { 
     painter.setPen(QColor(0, 0, 0));
     int lineHeight = fontMetrics().height();
-    int charWidth = fontMetrics().horizontalAdvance('0');
 
     int gutterWidth = textLeft(); // space reserved for line numbers on the left
 
