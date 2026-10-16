@@ -18,6 +18,8 @@ public:
     void save();      // save current buffer to file
     void newFile();   // clear buffer and start a new file
 
+    void selectAll();
+
 private:
     bool cursorVisible = true; // used for blinking cursor
     QTimer blinkTimer;         // controls cursor blink timing

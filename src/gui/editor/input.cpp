@@ -107,3 +107,10 @@ void Editor::keyPressEvent(QKeyEvent* event) {
     resetBlink();
     update(); // ask Qt to call paintEvent again, so the change shows up
 }
+
+void Editor::selectAll() {
+    anchor = Cursor(0,0);
+    size_t last = buf.lines.size()-1;
+    buf.cursor = Cursor(last, buf.lines[last].size());
+    update();
+}
