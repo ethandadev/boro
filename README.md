@@ -13,6 +13,7 @@ A code editor written in C++, built from scratch.
 <img src="https://img.shields.io/badge/Platform-macOS-000000?logo=apple&logoColor=white" alt="macOS">
 <img src="https://img.shields.io/badge/C%2B%2B-20-00599C?logo=cplusplus&logoColor=white" alt="C++">
 <a href="https://github.com/ethandadev/boro"><img src="https://img.shields.io/github/stars/ethandadev/boro?style=flat&logo=github" alt="GitHub stars"></a>
+![Made with Qt](https://img.shields.io/badge/Made%20with-Qt-41CD52?logo=Qt&logoColor=white)
 
 </div>
 
