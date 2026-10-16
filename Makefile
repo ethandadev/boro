@@ -7,7 +7,8 @@ FILE ?= src/terminal/main.cpp                                            # CHANG
 BUILD = build-terminal
 
 # read the version straight from config.hpp, so it's only defined in one place
-VERSION := $(shell sed -n 's/.*VERSION *= *"\([^"]*\)".*/\1/p' src/core/config.hpp)   # CHANGED path
+VERSION := $(shell sed -n 's/.*VERSION *= *"\([^"]*\)".*/\1/p' src/core/config.hpp)
+VERSION := $(strip $(VERSION))
 
 APP_CERT       = Developer ID Application: Beyond Diamond Limited (92JK43YAHC)
 INSTALL_CERT   = Developer ID Installer: Beyond Diamond Limited (92JK43YAHC)
@@ -45,7 +46,7 @@ pkg: universal
 
 # build and launch the Qt version
 # official Qt (not Homebrew's) so the app runs on older macOS + Intel
-QT_DIR = $(HOME)/Qt/6.8.3/macos
+QT_DIR = $(HOME)/Qt/6.10.3/macos
 APP = build/Boro.app
 APP_PKG = build/Boro-$(VERSION).pkg
 
@@ -57,9 +58,11 @@ gui: gui-build
 	./$(APP)/Contents/MacOS/Boro
 
 # one-time setup: download the official Qt into ~/Qt
+# (uses its own little Python venv, so it doesn't touch Homebrew's Python)
 qt:
-	pip3 install aqtinstall
-	python3 -m aqt install-qt mac desktop 6.8.3 clang_64 -O $(HOME)/Qt
+	python3 -m venv $(HOME)/Qt/.venv
+	$(HOME)/Qt/.venv/bin/pip install aqtinstall
+	$(HOME)/Qt/.venv/bin/python -m aqt install-qt mac desktop 6.10.3 clang_64 -O $(HOME)/Qt
 
 # build, bundle Qt, sign, package, notarize -> build/Boro-<version>.pkg
 app-pkg:
