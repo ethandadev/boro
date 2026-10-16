@@ -65,6 +65,16 @@ void Editor::keyPressEvent(QKeyEvent* event) {
     QString text = event->text();
     bool shift = event->modifiers() & Qt::ShiftModifier;
     bool isArrow = (key == Qt::Key_Up || key == Qt::Key_Down || key == Qt::Key_Left || key == Qt::Key_Right);
+
+    if (hasSelection() && !isArrow) {
+        deleteSelection();
+        if (key == Qt::Key_Backspace) {
+            keepCursorVisible();
+            resetBlink();
+            update();
+            return;
+        }
+    }
     
     
     // map incoming keyboard keys to buffer editing actions

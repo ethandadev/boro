@@ -70,3 +70,25 @@ void Editor::resetBlink() {
     cursorVisible = true;
     blinkTimer.start(500);
 }
+
+bool Editor::hasSelection(){
+    return (anchor.col != buf.cursor.col || anchor.row != buf.cursor.row);
+}
+
+void Editor::deleteSelection(){
+    Cursor start = anchor;
+    Cursor end = buf.cursor;
+    if (end.row < start.row || (end.row == start.row && end.col < start.col)) {
+        std::swap(start, end);
+    }
+
+    std::string before = buf.lines[start.row].substr(0, start.col);
+    std::string after = buf.lines[end.row].substr(end.col);
+    buf.lines[start.row] = before + after;
+
+    buf.lines.erase(buf.lines.begin() + start.row + 1, buf.lines.begin() + end.row + 1);
+
+    buf.cursor = start;
+    anchor = start;
+    buf.dirty = true;
+}
