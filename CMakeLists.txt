@@ -5,6 +5,11 @@
 cmake_minimum_required(VERSION 3.21)
 
 # Names the project and says it's written in C++ ("CXX" is CMake's name for C++).
+# run on macOS 13+ and on both Apple Silicon and Intel Macs
+# (must come before project())
+set(CMAKE_OSX_DEPLOYMENT_TARGET "13.0")
+set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
+
 project(boro_gui LANGUAGES CXX)
 
 # Use C++20 — same as -std=c++20 in your Makefile.

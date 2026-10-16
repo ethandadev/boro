@@ -44,12 +44,40 @@ pkg: universal
 	xcrun stapler staple $(PKG)
 
 # build and launch the Qt version
-gui:
-	cmake -B build -DCMAKE_PREFIX_PATH=$$(brew --prefix qt)
+# official Qt (not Homebrew's) so the app runs on older macOS + Intel
+QT_DIR = $(HOME)/Qt/6.8.3/macos
+APP = build/Boro.app
+APP_PKG = build/Boro-$(VERSION).pkg
+
+gui-build:
+	cmake -B build -DCMAKE_PREFIX_PATH=$(QT_DIR)
 	cmake --build build
-		./build/Boro.app/Contents/MacOS/Boro
+
+gui: gui-build
+	./$(APP)/Contents/MacOS/Boro
+
+# one-time setup: download the official Qt into ~/Qt
+qt:
+	pip3 install aqtinstall
+	python3 -m aqt install-qt mac desktop 6.8.3 clang_64 -O $(HOME)/Qt
+
+# build, bundle Qt, sign, package, notarize -> build/Boro-<version>.pkg
+app-pkg:
+	rm -rf build
+	$(MAKE) gui-build
+	$(QT_DIR)/bin/macdeployqt $(APP)
+	find $(APP)/Contents -name "*.dylib" -exec codesign --force --options runtime --timestamp --sign "$(APP_CERT)" {} \;
+	find $(APP)/Contents/Frameworks -maxdepth 1 -name "*.framework" -exec codesign --force --options runtime --timestamp --sign "$(APP_CERT)" {} \;
+	codesign --force --options runtime --timestamp --sign "$(APP_CERT)" $(APP)
+	codesign --verify --deep --strict $(APP)
+	pkgbuild --component $(APP) --install-location /Applications --identifier com.ethandadev.boro.app \
+	         --version $(VERSION) --sign "$(INSTALL_CERT)" $(APP_PKG)
+	xcrun notarytool submit $(APP_PKG) --keychain-profile "$(NOTARY_PROFILE)" --wait
+	xcrun stapler staple $(APP_PKG)
+	@echo "done: $(APP_PKG)"
+	@vtool -show $(APP)/Contents/MacOS/Boro | grep minos
 
 clean:
 	rm -rf $(BUILD) build
 
-.PHONY: run release install universal pkg gui clean
+.PHONY: run release install universal pkg gui gui-build qt app-pkg clean
