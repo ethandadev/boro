@@ -65,6 +65,16 @@ void Editor::keyPressEvent(QKeyEvent* event) {
     QString text = event->text();
     bool shift = event->modifiers() & Qt::ShiftModifier;
     bool isArrow = (key == Qt::Key_Up || key == Qt::Key_Down || key == Qt::Key_Left || key == Qt::Key_Right);
+
+    if (hasSelection() && !isArrow) {
+        deleteSelection();
+        if (key == Qt::Key_Backspace) {
+            keepCursorVisible();
+            resetBlink();
+            update();
+            return;
+        }
+    }
     
     
     // map incoming keyboard keys to buffer editing actions
@@ -96,4 +106,11 @@ void Editor::keyPressEvent(QKeyEvent* event) {
     keepCursorVisible(); // scroll if needed
     resetBlink();
     update(); // ask Qt to call paintEvent again, so the change shows up
+}
+
+void Editor::selectAll() {
+    anchor = Cursor(0,0);
+    size_t last = buf.lines.size()-1;
+    buf.cursor = Cursor(last, buf.lines[last].size());
+    update();
 }

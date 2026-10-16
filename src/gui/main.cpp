@@ -32,6 +32,11 @@ int main(int argc, char* argv[]) {
     QObject::connect(openAction, &QAction::triggered, editor, &Editor::openFile);
     QObject::connect(saveAction, &QAction::triggered, editor, &Editor::save);
 
+    QMenu* editMenu = window.menuBar()->addMenu("Edit");
+    QAction* selectAllAction = editMenu->addAction("Select All");
+    selectAllAction->setShortcut(QKeySequence::SelectAll);
+    QObject::connect(selectAllAction, &QAction::triggered, editor, &Editor::selectAll);
+
     // other random stuff
     window.resize(900, 600);
     window.setWindowTitle("Boro — Untitled");
