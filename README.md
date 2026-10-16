@@ -28,11 +28,19 @@ I had to choose something to make, a code editor gave all the fundamentals, so h
 ## Install
 
 **Homebrew**
+Terminal Version:
 ```
 brew install ethandadev/tap/boro
 ```
 
-**Installer:** download `boro-0.1.0.pkg` from [Releases](https://github.com/ethandadev/boro/releases).
+GUI Version:
+```
+not out yet sorry...
+```
+
+**Installer:** download `boro-0.2.0.pkg` from [Releases](https://github.com/ethandadev/boro/releases).
+
+If you really want to use the terminal version for some reason then just download `boro-0.1.0.pkg`
 
 ---
 
@@ -46,8 +54,14 @@ Anyone is welcome, from no experience to being a experienced developer.
 To build boro run
 
 ```sh
+make gui
+```
+for gui version
+
+```sh
 make
 ```
+for terminal version
 
 in the project directory.
 
@@ -55,7 +69,7 @@ in the project directory.
 
 ## Status
 
-It's going quite well, so far it's almost like _GNU Nano_ except the find and replace features.
+It's quite nice, the terminal version is pretty nice I'm working on the GUI now.
 You can 100% edit boro's own source code in boro.
 
 ---
@@ -66,6 +80,7 @@ For anyone else(or me) to work on:
 
 - [ ] GUI
 - [ ] Better Comments
+- [ ] Undo/Redo Features
 
 ---
 
