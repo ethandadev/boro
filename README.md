@@ -35,7 +35,7 @@ brew install ethandadev/tap/boro
 
 GUI Version:
 ```
-not out yet sorry...
+brew install --cask ethandadev/tap/boro-app
 ```
 
 **Installer:** download `boro-0.2.0.pkg` from [Releases](https://github.com/ethandadev/boro/releases).
