@@ -20,6 +20,8 @@ public:
 
     void selectAll();
 
+    void copy();
+
 private:
     bool cursorVisible = true; // used for blinking cursor
     QTimer blinkTimer;         // controls cursor blink timing
@@ -47,6 +49,8 @@ private:
     bool hasSelection(); // check whether text is selected
 
     void deleteSelection();
+
+    std::string selectedText();
 
 protected:
     void paintEvent(QPaintEvent* event) override;       // redraw editor

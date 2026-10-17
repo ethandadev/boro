@@ -92,3 +92,23 @@ void Editor::deleteSelection(){
     anchor = start;
     buf.dirty = true;
 }
+
+std::string Editor::selectedText() {
+    Cursor start = anchor;
+    Cursor end = buf.cursor;
+    if (end.row < start.row || (end.row == start.row && end.col < start.col)) {
+        std::swap(start, end);
+    }
+
+    if (start.row == end.row) {
+        return buf.lines[start.row].substr(start.col, end.col-start.col);
+    }
+    
+    std::string text = buf.lines[start.row].substr(start.col);
+    for (size_t row = start.row + 1; row < end.row; row++) {
+        text += "\n" + buf.lines[row];
+    }
+    text += "\n" + buf.lines[end.row].substr(0, end.col);
+
+    return text;
+}

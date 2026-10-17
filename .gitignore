@@ -6,6 +6,7 @@ build/
 build-terminal/
 *.dSYM/
 *.pkg
+**/.DS_Store
 
 # macOS
 .DS_Store

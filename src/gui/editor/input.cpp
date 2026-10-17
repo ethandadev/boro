@@ -2,6 +2,8 @@
 #include "config.hpp"
 #include <QKeyEvent>
 #include <QMouseEvent>
+#include <QApplication>
+#include <QClipboard>
 #include <QWheelEvent>
 #include <algorithm>
 
@@ -65,8 +67,10 @@ void Editor::keyPressEvent(QKeyEvent* event) {
     QString text = event->text();
     bool shift = event->modifiers() & Qt::ShiftModifier;
     bool isArrow = (key == Qt::Key_Up || key == Qt::Key_Down || key == Qt::Key_Left || key == Qt::Key_Right);
+    bool isTyping = (key == Qt::Key_Backspace || key == Qt::Key_Return|| key == Qt::Key_Enter || key == Qt::Key_Tab || (!text.isEmpty() && text[0].unicode() >= 32 && text[0].unicode() <= 126));
+    bool cmdOrCtrl = event->modifiers() & (Qt::ControlModifier | Qt::GroupSwitchModifier); 
 
-    if (hasSelection() && !isArrow) {
+    if (hasSelection() && isTyping) {
         deleteSelection();
         if (key == Qt::Key_Backspace) {
             keepCursorVisible();
@@ -99,9 +103,10 @@ void Editor::keyPressEvent(QKeyEvent* event) {
         }
     } 
 
-    if (!(shift && isArrow)) {
+    if (!(shift && isArrow) && (!cmdOrCtrl && isArrow)) {
         anchor = buf.cursor;
     }
+
 
     keepCursorVisible(); // scroll if needed
     resetBlink();
@@ -113,4 +118,11 @@ void Editor::selectAll() {
     size_t last = buf.lines.size()-1;
     buf.cursor = Cursor(last, buf.lines[last].size());
     update();
+}
+
+void Editor::copy() {
+    if (!hasSelection()) {
+        return;
+    }
+    QApplication::clipboard()->setText(QString::fromStdString(selectedText()) );
 }
