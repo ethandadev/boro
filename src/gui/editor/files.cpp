@@ -4,7 +4,7 @@
 
 void Editor::openFile() {
     if (!confirmDiscard()) {
-            return; // user chose not to discard changes
+        return; // user chose not to discard changes
     }
     QString path = QFileDialog::getOpenFileName(this, "Open File");   // empty if you pressed cancel
     if (!path.isEmpty()) {                                   // only if a file was actually picked

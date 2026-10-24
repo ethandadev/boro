@@ -21,7 +21,10 @@ public:
 
     void selectAll();
 
+    //cool stuff :D
     void copy();
+    void cut();
+    void paste();
 
 private:
     bool cursorVisible = true; // used for blinking cursor
@@ -56,9 +59,10 @@ private:
 
     std::pair<Cursor, Cursor> selectionRange();   // (earlier, later), whichever way you dragged
 
-    
+
 
 protected:
+    //this stuff allows Qt to call ykyk
     void paintEvent(QPaintEvent* event) override;       // redraw editor
     void keyPressEvent(QKeyEvent* event) override;      // handle keyboard input
     void blink();                                       // toggle cursor visibility

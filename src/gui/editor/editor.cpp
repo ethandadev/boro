@@ -14,7 +14,7 @@ Editor::Editor(QWidget* parent) : QWidget(parent) {
     });
     font.setPointSize(FONT_SIZE); // set fontsize
     setFont(font); //set font
-    setFocusPolicy(Qt::StrongFocus); // NEW: let this widget receive key presses
+    setFocusPolicy(Qt::StrongFocus); // let this widget receive key presses
 
     // every time blinkTimer ticks, call this editor's blink()
     connect(&blinkTimer, &QTimer::timeout, this, &Editor::blink);

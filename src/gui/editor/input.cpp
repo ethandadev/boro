@@ -7,6 +7,8 @@
 #include <QWheelEvent>
 #include <algorithm>
 
+
+//nice things
 void Editor::mouseMoveEvent(QMouseEvent* event) {
     buf.cursor = positionAt(int(event->position().x()), int(event->position().y())); // update cursor while dragging mouse
     keepCursorVisible();
@@ -14,6 +16,7 @@ void Editor::mouseMoveEvent(QMouseEvent* event) {
     update();
 }
 
+// move cursor to the right place
 void Editor::mousePressEvent(QMouseEvent* event) {
     Cursor pos = positionAt(int(event->position().x()), int(event->position().y()));
     buf.cursor = pos;
@@ -25,6 +28,7 @@ void Editor::mousePressEvent(QMouseEvent* event) {
 }
 
 void Editor::keepCursorVisible() {
+    // keeps the cursor visible :D
     int lineHeight = fontMetrics().height();
     int cursorTop = int(buf.cursor.row) * lineHeight;
     int cursorBottom = cursorTop + lineHeight;
@@ -39,6 +43,7 @@ void Editor::keepCursorVisible() {
     clampScroll();       // NEW: make sure scrollY is within valid range
 }
 
+//scrolling
 void Editor::wheelEvent(QWheelEvent* event) {
     int deltaY;
     if (!event->pixelDelta().isNull()) {
@@ -52,6 +57,7 @@ void Editor::wheelEvent(QWheelEvent* event) {
     update();
 }
 
+//some weird ahh helper function
 void Editor::clampScroll() {
     int lineHeight = fontMetrics().height();
     int contentHeight = int(buf.lines.size()) * lineHeight;
@@ -62,6 +68,8 @@ void Editor::clampScroll() {
     scrollY = std::max(scrollY, 0); // Ensure scrollY is not negative
 }
 
+
+//something
 void Editor::keyPressEvent(QKeyEvent* event) {
     int key = event->key();
     QString text = event->text();
@@ -82,6 +90,8 @@ void Editor::keyPressEvent(QKeyEvent* event) {
     
     
     // map incoming keyboard keys to buffer editing actions
+
+    // holy if else if else if chain
     if (!cmdOrCtrl) {
         if (key == Qt::Key_Backspace) {
             deleteChar(buf);
@@ -122,9 +132,42 @@ void Editor::selectAll() {
     update();
 }
 
+
+//the cool and actually useful stuff below :D
 void Editor::copy() {
     if (!hasSelection()) {
         return;
     }
     QApplication::clipboard()->setText(QString::fromStdString(selectedText()) );
+}
+
+void Editor::cut() {
+    if (!hasSelection()){
+        return;
+    }
+    copy();
+    deleteSelection();
+
+    //this stuff goes below almost everything
+    keepCursorVisible();
+    resetBlink();
+    update();
+
+}
+
+void Editor::paste() {
+    std::string text = cleanText(QApplication::clipboard()->text().toStdString());
+    if (text.empty()) {
+        return;
+    }
+    if (hasSelection()) {
+        deleteSelection();
+    }
+    buf.cursor = insertText(buf, buf.cursor, text);
+    anchor = buf.cursor;
+
+    //this stuff goes below almost everything
+    keepCursorVisible();
+    resetBlink();
+    update();
 }
