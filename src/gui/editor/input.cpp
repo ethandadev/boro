@@ -48,7 +48,7 @@ void Editor::wheelEvent(QWheelEvent* event) {
     }
 
     scrollY -= deltaY; // subtract because scrolling up should decrease scrollY
-    clampScroll();       // NEW: make sure scrollY is within valid range
+    clampScroll();       //  make sure scrollY is within valid range
     update();
 }
 
@@ -67,8 +67,8 @@ void Editor::keyPressEvent(QKeyEvent* event) {
     QString text = event->text();
     bool shift = event->modifiers() & Qt::ShiftModifier;
     bool isArrow = (key == Qt::Key_Up || key == Qt::Key_Down || key == Qt::Key_Left || key == Qt::Key_Right);
-    bool isTyping = (key == Qt::Key_Backspace || key == Qt::Key_Return|| key == Qt::Key_Enter || key == Qt::Key_Tab || (!text.isEmpty() && text[0].unicode() >= 32 && text[0].unicode() <= 126));
-    bool cmdOrCtrl = event->modifiers() & (Qt::ControlModifier | Qt::GroupSwitchModifier); 
+    bool cmdOrCtrl = event->modifiers() & Qt::ControlModifier;   // define this first
+    bool isTyping = key == Qt::Key_Backspace || key == Qt::Key_Return || key == Qt::Key_Enter || key == Qt::Key_Tab || (!cmdOrCtrl && !text.isEmpty() && text[0].unicode() >= 32 && text[0].unicode() <= 126); 
 
     if (hasSelection() && isTyping) {
         deleteSelection();
@@ -82,28 +82,30 @@ void Editor::keyPressEvent(QKeyEvent* event) {
     
     
     // map incoming keyboard keys to buffer editing actions
-    if (key == Qt::Key_Backspace) {
-        deleteChar(buf);
-    } else if (key == Qt::Key_Tab) {
-        insertTab(buf);
-    } else if (key == Qt::Key_Up) {
-        moveUp(buf);
-    } else if (key == Qt::Key_Left) {
-        moveLeft(buf);
-    } else if (key == Qt::Key_Right) {
-        moveRight(buf);
-    } else if (key == Qt::Key_Down) {
-        moveDown(buf);
-    } else if (key == Qt::Key_Enter || key == Qt::Key_Return) {
-        insertNewLine(buf);
-    } else if (!text.isEmpty()) {
-        int code = text[0].unicode();
-        if (code >= 32 && code <= 126) {
-            insertChar(buf, char(code)); // regular printable characters
-        }
-    } 
+    if (!cmdOrCtrl) {
+        if (key == Qt::Key_Backspace) {
+            deleteChar(buf);
+        } else if (key == Qt::Key_Tab) {
+            insertTab(buf);
+        } else if (key == Qt::Key_Up) {
+            moveUp(buf);
+        } else if (key == Qt::Key_Left) {
+            moveLeft(buf);
+        } else if (key == Qt::Key_Right) {
+            moveRight(buf);
+        } else if (key == Qt::Key_Down) {
+            moveDown(buf);
+        } else if (key == Qt::Key_Enter || key == Qt::Key_Return) {
+            insertNewLine(buf);
+        } else if (!text.isEmpty()) {
+            int code = text[0].unicode();
+            if (code >= 32 && code <= 126) {
+                insertChar(buf, char(code)); // regular printable characters
+            }
+        } 
+    }
 
-    if (!(shift && isArrow) && (!cmdOrCtrl && isArrow)) {
+    if (isTyping || (isArrow && !shift)) {
         anchor = buf.cursor;
     }
 

@@ -2,10 +2,12 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <compare>
 
 struct Cursor {
     size_t row = 0;
     size_t col = 0;
+    auto operator<=>(const Cursor&) const = default;
 };
 
 struct Buffer {
@@ -40,4 +42,15 @@ void moveRight(Buffer& buf); // declaration only
 
 void insertTab(Buffer& buf); // declaration only
 
+//helper functions for gui
+
+std::string textBetween(const Buffer& buf, Cursor start, Cursor end);
+
+void eraseRange(Buffer& buf, Cursor start, Cursor end);
+
+Cursor insertText(Buffer& buf, Cursor at, const std::string& text);
+
+Cursor endOf(Cursor start, const std::string& text);
+
+std::string cleanText(const std::string& text);        // used by paste, see 1d
 

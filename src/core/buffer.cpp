@@ -121,3 +121,85 @@ void insertTab(Buffer& buf) {
     buf.cursor.col += TAB_WIDTH; // Move cursor to the right
     buf.dirty = true; // set the dirty flag to true to indicate that the buffer has unsaved changes
 }
+
+//helper functions
+
+std::string textBetween(const Buffer& buf, Cursor start, Cursor end) {
+    if (start.row == end.row) {
+        return buf.lines[start.row].substr(start.col, end.col-start.col);
+    }
+    
+    std::string text = buf.lines[start.row].substr(start.col);
+    for (size_t row = start.row + 1; row < end.row; row++) {
+        text += "\n" + buf.lines[row];
+    }
+    text += "\n" + buf.lines[end.row].substr(0, end.col);
+
+    return text;
+}
+
+void eraseRange(Buffer& buf, Cursor start, Cursor end) {
+    std::string after = buf.lines[end.row].substr(end.col);       // grab this BEFORE changing anything
+    buf.lines[start.row] = buf.lines[start.row].substr(0, start.col) + after;
+    buf.lines.erase(buf.lines.begin() + start.row + 1, buf.lines.begin() + end.row + 1);
+    buf.cursor = start;
+    buf.dirty = true;
+}
+
+Cursor insertText(Buffer& buf, Cursor at, const std::string& text) {
+    std::vector<std::string> pieces;
+    size_t from = 0;
+    while (true) {
+        size_t nl = text.find('\n', from);                  // like Python's text.find("\n", from), but npos instead of -1
+        if (nl == std::string::npos) { pieces.push_back(text.substr(from)); break; }
+        pieces.push_back(text.substr(from, nl - from));
+        from = nl + 1;
+    }
+
+    std::string head = buf.lines[at.row].substr(0, at.col);
+    std::string tail = buf.lines[at.row].substr(at.col);
+    
+    Cursor end;
+
+    if (pieces.size() == 1) {
+        buf.lines[at.row] = head + pieces[0] + tail;
+        end = Cursor(at.row, head.size() + pieces[0].size());
+    } else {
+        buf.lines[at.row] = head + pieces[0];
+        end = Cursor(at.row + pieces.size() - 1);
+        pieces[-1] += tail;
+        buf.lines.insert(buf.lines.begin() + at.row, pieces.begin() + 1, pieces.end());
+    }
+
+    buf.cursor = end;
+    buf.dirty = true;
+    return end;
+}
+
+Cursor endOf(Cursor start, const std::string& text) {
+    Cursor end = start;
+    for (char c : text) {
+        if (c == '\n') {
+            end.row++;
+            end.col = 0;
+        } else {
+            end.col++;
+        }
+    }
+
+    return end;
+}
+
+std::string cleanText(const std::string& text) {
+    std::string out = "";
+
+    for (char c : text) {
+        if (c == '\t') {
+            out += std::string(TAB_WIDTH, ' ');
+        } else if (c == '\n' || 32 <= c <= 126) {
+            out += c;
+        }
+    }
+
+    return out;
+}

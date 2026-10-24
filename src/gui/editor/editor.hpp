@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QTimer>
 #include <QPainter>
+#include <utility>
 
 #include "buffer.hpp" // text buffer and cursor logic
 
@@ -51,6 +52,11 @@ private:
     void deleteSelection();
 
     std::string selectedText();
+
+
+    std::pair<Cursor, Cursor> selectionRange();   // (earlier, later), whichever way you dragged
+
+    
 
 protected:
     void paintEvent(QPaintEvent* event) override;       // redraw editor

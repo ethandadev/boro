@@ -76,39 +76,20 @@ bool Editor::hasSelection(){
 }
 
 void Editor::deleteSelection(){
-    Cursor start = anchor;
-    Cursor end = buf.cursor;
-    if (end.row < start.row || (end.row == start.row && end.col < start.col)) {
-        std::swap(start, end);
-    }
-
-    std::string before = buf.lines[start.row].substr(0, start.col);
-    std::string after = buf.lines[end.row].substr(end.col);
-    buf.lines[start.row] = before + after;
-
-    buf.lines.erase(buf.lines.begin() + start.row + 1, buf.lines.begin() + end.row + 1);
-
-    buf.cursor = start;
+    auto [start, end] = selectionRange();       // like:  start, end = self.selection_range()
+    eraseRange(buf, start, end);
     anchor = start;
-    buf.dirty = true;
 }
 
 std::string Editor::selectedText() {
-    Cursor start = anchor;
-    Cursor end = buf.cursor;
-    if (end.row < start.row || (end.row == start.row && end.col < start.col)) {
-        std::swap(start, end);
+    auto [start, end] = selectionRange();       // like:  start, end = self.selection_range()
+    return textBetween(buf, start, end);
+}
+
+std::pair<Cursor, Cursor> Editor::selectionRange() {
+    if (buf.cursor.row < anchor.row || (buf.cursor.row == anchor.row && buf.cursor.col < anchor.col)) {
+        return {buf.cursor, anchor};
     }
 
-    if (start.row == end.row) {
-        return buf.lines[start.row].substr(start.col, end.col-start.col);
-    }
-    
-    std::string text = buf.lines[start.row].substr(start.col);
-    for (size_t row = start.row + 1; row < end.row; row++) {
-        text += "\n" + buf.lines[row];
-    }
-    text += "\n" + buf.lines[end.row].substr(0, end.col);
-
-    return text;
+    return {anchor, buf.cursor};
 }
