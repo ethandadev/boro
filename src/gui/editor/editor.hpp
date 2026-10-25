@@ -5,69 +5,89 @@
 #include <QTimer>
 #include <QPainter>
 #include <utility>
+#include <vector>
+#include <string>
 
 #include "buffer.hpp" // text buffer and cursor logic
 
+struct Edit {
+    Cursor pos;
+    std::string removed;
+    std::string inserted;
+};
+
+
 // Qt-based text editor widget
 class Editor : public QWidget {
-public:
-    Editor(QWidget* parent = nullptr);
+    public:
+        Editor(QWidget* parent = nullptr);
 
-    Buffer buf;       // text buffer, same as terminal version
+        Buffer buf;       // text buffer, same as terminal version
 
-    void openFile();  // open an existing file
-    void save();      // save current buffer to file
-    void newFile();   // clear buffer and start a new file
+        void openFile();  // open an existing file
+        void save();      // save current buffer to file
+        void newFile();   // clear buffer and start a new file
 
-    void selectAll();
+        void selectAll();
 
-    //cool stuff :D
-    void copy();
-    void cut();
-    void paste();
+        //cool stuff :D
+        void copy();
+        void cut();
+        void paste();
 
-private:
-    bool cursorVisible = true; // used for blinking cursor
-    QTimer blinkTimer;         // controls cursor blink timing
+        //complicated stuff :(
+        void undo();
+        void redo();
 
-    int scrollY = 0; // how far down the text is scrolled
+    private:
+        bool cursorVisible = true; // used for blinking cursor
+        QTimer blinkTimer;         // controls cursor blink timing
 
-    void keepCursorVisible(); // scroll so the cursor stays on screen
-    void clampScroll();       // make sure scrollY is within valid range
+        int scrollY = 0; // how far down the text is scrolled
 
-    bool confirmDiscard(); // ask before losing unsaved changes
+        void keepCursorVisible(); // scroll so the cursor stays on screen
+        void clampScroll();       // make sure scrollY is within valid range
 
-    int textLeft(); // x position where text starts (after gutter)
+        bool confirmDiscard(); // ask before losing unsaved changes
 
-    Cursor positionAt(int x, int y); // convert mouse position to cursor position
-    Cursor anchor;                   // selection start position
+        int textLeft(); // x position where text starts (after gutter)
 
-    void resetBlink();  // restart cursor blinking after input
-    void updateTitle(); // update window title with file name / modified state
+        Cursor positionAt(int x, int y); // convert mouse position to cursor position
+        Cursor anchor;                   // selection start position
 
-    void drawGutter(QPainter& painter);    // draw line numbers
-    void drawSelection(QPainter& painter); // draw selected text background
-    void drawLines(QPainter& painter);     // draw text lines
-    void drawCursor(QPainter& painter);    // draw blinking cursor
+        void resetBlink();  // restart cursor blinking after input
+        void updateTitle(); // update window title with file name / modified state
 
-    bool hasSelection(); // check whether text is selected
+        void drawGutter(QPainter& painter);    // draw line numbers
+        void drawSelection(QPainter& painter); // draw selected text background
+        void drawLines(QPainter& painter);     // draw text lines
+        void drawCursor(QPainter& painter);    // draw blinking cursor
 
-    void deleteSelection();
+        bool hasSelection(); // check whether text is selected
 
-    std::string selectedText();
+        void deleteSelection();
 
+        std::string selectedText();
 
-    std::pair<Cursor, Cursor> selectionRange();   // (earlier, later), whichever way you dragged
+        std::pair<Cursor, Cursor> selectionRange();   // (earlier, later), whichever way you dragged
+        
+        //stuff for redo/undo, ik so complicated
+        std::vector<Edit> undoStack;
+        std::vector<Edit> redoStack;
+        bool canMerge = false;
 
+        void applyChange(Cursor pos, const std::string& oldText, const std::string& newText);
+        void replace(Cursor start, Cursor end, const std::string& text);
+        void replaceSelection(const std::string& text);
+        void remember(const Edit& edit);   
 
-
-protected:
-    //this stuff allows Qt to call ykyk
-    void paintEvent(QPaintEvent* event) override;       // redraw editor
-    void keyPressEvent(QKeyEvent* event) override;      // handle keyboard input
-    void blink();                                       // toggle cursor visibility
-    void wheelEvent(QWheelEvent* event) override;       // handle mouse wheel scrolling
-    bool focusNextPrevChild(bool next) override;        // stop Tab from leaving editor
-    void mousePressEvent(QMouseEvent* event) override;  // handle mouse click / selection start
-    void mouseMoveEvent(QMouseEvent* event) override;   // handle dragging to select text
-};
+    protected:
+        //this stuff allows Qt to call ykyk
+        void paintEvent(QPaintEvent* event) override;       // redraw editor
+        void keyPressEvent(QKeyEvent* event) override;      // handle keyboard input
+        void blink();                                       // toggle cursor visibility
+        void wheelEvent(QWheelEvent* event) override;       // handle mouse wheel scrolling
+        bool focusNextPrevChild(bool next) override;        // stop Tab from leaving editor
+        void mousePressEvent(QMouseEvent* event) override;  // handle mouse click / selection start
+        void mouseMoveEvent(QMouseEvent* event) override;   // handle dragging to select text
+    };

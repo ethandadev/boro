@@ -78,26 +78,21 @@ void Editor::keyPressEvent(QKeyEvent* event) {
     bool cmdOrCtrl = event->modifiers() & Qt::ControlModifier;   // define this first
     bool isTyping = key == Qt::Key_Backspace || key == Qt::Key_Return || key == Qt::Key_Enter || key == Qt::Key_Tab || (!cmdOrCtrl && !text.isEmpty() && text[0].unicode() >= 32 && text[0].unicode() <= 126); 
 
-    if (hasSelection() && isTyping) {
-        deleteSelection();
-        if (key == Qt::Key_Backspace) {
-            keepCursorVisible();
-            resetBlink();
-            update();
-            return;
-        }
+    if (cmdOrCtrl) {
+        return;
     }
-    
-    
     // map incoming keyboard keys to buffer editing actions
 
     // holy if else if else if chain
-    if (!cmdOrCtrl) {
-        if (key == Qt::Key_Backspace) {
-            deleteChar(buf);
-        } else if (key == Qt::Key_Tab) {
-            insertTab(buf);
-        } else if (key == Qt::Key_Up) {
+    if (key == Qt::Key_Backspace) {
+        if (!hasSelection()) {
+            moveLeft(buf);
+        }
+        replaceSelection("");
+    } else if (key == Qt::Key_Tab) {
+        replaceSelection(std::string(" ", TAB_WIDTH));
+    } else if (isArrow) {
+        if (key == Qt::Key_Up) {
             moveUp(buf);
         } else if (key == Qt::Key_Left) {
             moveLeft(buf);
@@ -105,20 +100,16 @@ void Editor::keyPressEvent(QKeyEvent* event) {
             moveRight(buf);
         } else if (key == Qt::Key_Down) {
             moveDown(buf);
-        } else if (key == Qt::Key_Enter || key == Qt::Key_Return) {
-            insertNewLine(buf);
-        } else if (!text.isEmpty()) {
-            int code = text[0].unicode();
-            if (code >= 32 && code <= 126) {
-                insertChar(buf, char(code)); // regular printable characters
-            }
-        } 
-    }
-
-    if (isTyping || (isArrow && !shift)) {
-        anchor = buf.cursor;
-    }
-
+        }
+        if (!shift) {
+            anchor = buf.cursor;
+        }
+        canMerge = false;
+    } else if (key == Qt::Key_Enter || key == Qt::Key_Return) {
+        replaceSelection("\n");
+    } else if (isTyping) {
+        replaceSelection(text[0]);
+    } 
 
     keepCursorVisible(); // scroll if needed
     resetBlink();

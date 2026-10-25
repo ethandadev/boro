@@ -37,6 +37,7 @@ qt_add_executable(boro-gui MACOSX_BUNDLE
     src/gui/editor/paint.cpp
     src/gui/editor/input.cpp
     src/gui/editor/files.cpp
+    src/gui/editor/history.cpp
     src/core/buffer.cpp
     resources/icon/boro.icns
 )
