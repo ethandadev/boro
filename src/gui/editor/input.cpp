@@ -21,6 +21,7 @@ void Editor::mousePressEvent(QMouseEvent* event) {
     Cursor pos = positionAt(int(event->position().x()), int(event->position().y()));
     buf.cursor = pos;
     anchor = pos; // update text cursor position on click
+    canMerge = false;
 
     resetBlink();
 
@@ -90,7 +91,7 @@ void Editor::keyPressEvent(QKeyEvent* event) {
         }
         replaceSelection("");
     } else if (key == Qt::Key_Tab) {
-        replaceSelection(std::string(" ", TAB_WIDTH));
+        replaceSelection(std::string(TAB_WIDTH, ' '));
     } else if (isArrow) {
         if (key == Qt::Key_Up) {
             moveUp(buf);
@@ -108,7 +109,7 @@ void Editor::keyPressEvent(QKeyEvent* event) {
     } else if (key == Qt::Key_Enter || key == Qt::Key_Return) {
         replaceSelection("\n");
     } else if (isTyping) {
-        replaceSelection(text[0]);
+        replaceSelection(text.toStdString());
     } 
 
     keepCursorVisible(); // scroll if needed
@@ -137,7 +138,7 @@ void Editor::cut() {
         return;
     }
     copy();
-    deleteSelection();
+    replaceSelection("");
 
     //this stuff goes below almost everything
     keepCursorVisible();
@@ -151,11 +152,7 @@ void Editor::paste() {
     if (text.empty()) {
         return;
     }
-    if (hasSelection()) {
-        deleteSelection();
-    }
-    buf.cursor = insertText(buf, buf.cursor, text);
-    anchor = buf.cursor;
+    replaceSelection(text);
 
     //this stuff goes below almost everything
     keepCursorVisible();

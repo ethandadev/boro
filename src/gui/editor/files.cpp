@@ -8,11 +8,9 @@ void Editor::openFile() {
     }
     QString path = QFileDialog::getOpenFileName(this, "Open File");   // empty if you pressed cancel
     if (!path.isEmpty()) {                                   // only if a file was actually picked
-        buf = Buffer();                   // throw away the old file, start fresh
-        anchor = buf.cursor;
+        resetState();
         loadFile(buf, path.toStdString());
         updateTitle();
-        scrollY = 0; // reset scroll position
         update();    // redraw the editor with the new file
     }
 
@@ -43,10 +41,8 @@ void Editor::newFile() {
     if (!confirmDiscard()) {
         return; // user cancelled new file action
     }
-    buf = Buffer();
-    anchor = buf.cursor;
+    resetState();
     buf.lines.push_back("");
-    scrollY = 0;
     updateTitle();
     update();
 }
@@ -54,4 +50,13 @@ void Editor::newFile() {
 void Editor::updateTitle() {
     QString name = QString::fromStdString((buf.fileName == "") ? "Untitled" : buf.fileName);
     window()->setWindowTitle("Boro - " + name);
+}
+
+void Editor::resetState() {
+    buf = Buffer();
+    anchor = buf.cursor;
+    scrollY = 0;
+    undoStack.clear();
+    redoStack.clear();
+    canMerge = false;
 }

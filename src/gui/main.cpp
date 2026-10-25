@@ -33,15 +33,22 @@ int main(int argc, char* argv[]) {
     QObject::connect(saveAction, &QAction::triggered, editor, &Editor::save);
 
     QMenu* editMenu = window.menuBar()->addMenu("Edit");
+    QAction* undoAction = editMenu->addAction("Undo");
+    QAction* redoAction = editMenu->addAction("Redo");
+    editMenu->addSeparator();
     QAction* cutAction = editMenu->addAction("Cut");
     QAction* copyAction = editMenu->addAction("Copy");
     QAction* pasteAction = editMenu->addAction("Paste");
     editMenu->addSeparator();
     QAction* selectAllAction = editMenu->addAction("Select All");
+    undoAction->setShortcut(QKeySequence::Undo);
+    redoAction->setShortcut(QKeySequence::Redo);
     copyAction->setShortcut(QKeySequence::Copy);
     cutAction->setShortcut(QKeySequence::Cut);
     pasteAction->setShortcut(QKeySequence::Paste);
     selectAllAction->setShortcut(QKeySequence::SelectAll);
+    QObject::connect(undoAction, &QAction::triggered, editor, &Editor::undo);
+    QObject::connect(redoAction, &QAction::triggered, editor, &Editor::redo);
     QObject::connect(cutAction, &QAction::triggered, editor, &Editor::cut);
     QObject::connect(copyAction, &QAction::triggered, editor, &Editor::copy);
     QObject::connect(pasteAction, &QAction::triggered, editor, &Editor::paste);

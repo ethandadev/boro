@@ -166,9 +166,9 @@ Cursor insertText(Buffer& buf, Cursor at, const std::string& text) {
         end = Cursor(at.row, head.size() + pieces[0].size());
     } else {
         buf.lines[at.row] = head + pieces[0];
-        end = Cursor(at.row + pieces.size() - 1);
-        pieces[-1] += tail;
-        buf.lines.insert(buf.lines.begin() + at.row, pieces.begin() + 1, pieces.end());
+        end = Cursor(at.row + pieces.size() - 1, pieces.back().size());
+        pieces.back() += tail;      // back() = Python's [-1]
+        buf.lines.insert(buf.lines.begin() + at.row + 1, pieces.begin() + 1, pieces.end()); 
     }
 
     buf.cursor = end;
@@ -196,7 +196,7 @@ std::string cleanText(const std::string& text) {
     for (char c : text) {
         if (c == '\t') {
             out += std::string(TAB_WIDTH, ' ');
-        } else if (c == '\n' || 32 <= c <= 126) {
+        } else if (c == '\n' || (32 <= c && c <= 126)) {
             out += c;
         }
     }

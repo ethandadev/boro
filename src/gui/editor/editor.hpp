@@ -80,6 +80,7 @@ class Editor : public QWidget {
         void replace(Cursor start, Cursor end, const std::string& text);
         void replaceSelection(const std::string& text);
         void remember(const Edit& edit);   
+        void resetState();
 
     protected:
         //this stuff allows Qt to call ykyk
