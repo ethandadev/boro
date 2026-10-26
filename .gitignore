@@ -7,10 +7,12 @@ build-terminal/
 *.dSYM/
 *.pkg
 **/.DS_Store
+*.log
 
 # macOS
+.idea/
 .DS_Store
 
 # node random stuff
 website/node_modules
-aqtinstall.log
+

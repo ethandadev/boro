@@ -3,7 +3,7 @@
 #include "editor.hpp"
 #include <QPainter>
 #include <QColor>
-
+#include <utility> // for std::swap
 
 void Editor::paintEvent(QPaintEvent*) {
     QPainter painter(this);              // a "pen" for drawing on this widget
@@ -51,8 +51,12 @@ void Editor::drawSelection(QPainter& painter) {
 
     int gutterWidth = textLeft(); // space reserved for line numbers on the left
 
-    auto [start, end] = selectionRange();       // like:  start, end = self.selection_range()
-
+    // flip them if you selected backwards
+    Cursor start = anchor;
+    Cursor end = buf.cursor;
+    if (end.row < start.row || (end.row == start.row && end.col < start.col)) {
+        std::swap(start, end);
+    }
 
     // one blue box per line
     for (size_t row = start.row; row <= end.row; row++) {

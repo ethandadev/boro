@@ -19,16 +19,16 @@ A code editor written in C++, built from scratch.
 
 ---
 
-> **The goal**: edit boro's own source code in boro.
+> **The Goal**: Code boro using boro
 
-boro was started as a passion project for me, I wanted to learn something new, I chose *C++*.
-I had to choose something to make, a code editor gave all the fundamentals, so here we are.
+<img src="resources/images/boro-preview.png">
 
 ---
 
 ## Install
 
 **Homebrew**
+
 Terminal Version:
 ```
 brew install ethandadev/tap/boro
@@ -42,13 +42,16 @@ brew install --cask ethandadev/tap/boro-app
 **Installer:** download `boro-0.2.0.pkg` from [Releases](https://github.com/ethandadev/boro/releases).
 
 If you really want to use the terminal version for some reason then just download `boro-0.1.0.pkg`
+> **boro terminal** will no longer be regularly updated
 
 ---
 
 ## Contributing
 
-I am literally *hoping* for people to help develop boro.
-Anyone is welcome, from no experience to being a experienced developer.
+Anyone who wants to contribute is welcome. 
+From beginner to professional. 
+I will support anyone who helps find issues, 
+develop new features and provide feedback.
 
 ### Build
 
@@ -57,21 +60,23 @@ To build boro run
 ```sh
 make gui
 ```
-for gui version
+for gui version and
 
 ```sh
 make
 ```
 for terminal version
 
-in the project directory.
+You might have to run `make qt` if it make complains.
 
 ---
 
 ## Status
 
-It's quite nice, the terminal version is pretty nice I'm working on the GUI now.
-You can 100% edit boro's own source code in boro.
+The GUI is officially available in the latest release, 
+though it is missing Undo/Redo features and horizontal
+scrolling, I am actively working on these features
+and should be ready on the next update.
 
 ---
 
@@ -79,9 +84,11 @@ You can 100% edit boro's own source code in boro.
 
 For anyone else(or me) to work on:
 
-- [ ] GUI
+- [x] GUI
 - [ ] Better Comments
-- [ ] Undo/Redo Features
+- [x] Undo/Redo Features
+- [ ] File Hierarchy
+- [ ] Horizontal Scrolling
 
 ---
 
