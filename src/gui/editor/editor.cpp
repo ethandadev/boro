@@ -37,14 +37,12 @@ bool Editor::focusNextPrevChild(bool) {
 
 
 int Editor::textLeft() {
-    int charWidth = fontMetrics().horizontalAdvance('0');
     int digits = std::to_string(buf.lines.size()).size();
-    return (digits + 3) * charWidth; // compute dynamic gutter width based on line count
+    return (digits + 3) * charWidth(); // compute dynamic gutter width based on line count
 }
 
 Cursor Editor::positionAt(int x, int y) {
-    int lineHeight = fontMetrics().height();
-    int row = (y + scrollY) / lineHeight;
+    int row = (y + scrollY) / lineHeight();
     row = std::min(row, int(buf.lines.size())-1);
     row = std::max(row, 0);
     QString line = QString::fromStdString(buf.lines[row]);
@@ -92,4 +90,25 @@ std::pair<Cursor, Cursor> Editor::selectionRange() {
     }
 
     return {anchor, buf.cursor};
+}
+
+int Editor::lineHeight() {
+    return fontMetrics().height();
+}
+
+int Editor::charWidth() {
+    return fontMetrics().horizontalAdvance('0');
+}
+
+int Editor::firstVisibleRow() {
+    return std::max(0, scrollY / lineHeight());
+}
+
+int Editor::lastVisibleRow() {
+    int row = (scrollY + height()) / lineHeight();
+    return std::min(row, int(buf.lines.size()) - 1);
+}
+
+int Editor::maxCols() {
+    return width() / charWidth() + 2;
 }

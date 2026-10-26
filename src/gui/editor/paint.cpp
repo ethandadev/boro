@@ -19,16 +19,15 @@ void Editor::paintEvent(QPaintEvent*) {
 
 void Editor::drawCursor(QPainter& painter) { 
     painter.setPen(QColor(0, 0, 0));
-    int lineHeight = fontMetrics().height();
 
     int gutterWidth = textLeft(); // space reserved for line numbers on the left
 
     if (cursorVisible) {
-        std::string line = buf.lines[buf.cursor.row];
+        const std::string& line = buf.lines[buf.cursor.row];
         QString beforeCursor = QString::fromStdString(line.substr(0, buf.cursor.col)); // like line[:col]
         int cursorX = gutterWidth + fontMetrics().horizontalAdvance(beforeCursor);
-        int cursorTop = int(buf.cursor.row) * lineHeight - scrollY;
-        painter.fillRect(cursorX, cursorTop, 2, lineHeight, QColor(0, 0, 0)); // draw blinking cursor bar
+        int cursorTop = int(buf.cursor.row) * lineHeight() - scrollY;
+        painter.fillRect(cursorX, cursorTop, 2, lineHeight(), QColor(0, 0, 0)); // draw blinking cursor bar
     }
 }
 
@@ -46,9 +45,6 @@ void Editor::drawGutter(QPainter& painter) {
 }
 
 void Editor::drawSelection(QPainter& painter) {
-    int lineHeight = fontMetrics().height();
-    int charWidth = fontMetrics().horizontalAdvance('0');
-
     int gutterWidth = textLeft(); // space reserved for line numbers on the left
 
     // flip them if you selected backwards
@@ -59,36 +55,36 @@ void Editor::drawSelection(QPainter& painter) {
     }
 
     // one blue box per line
-    for (size_t row = start.row; row <= end.row; row++) {
-        QString line = QString::fromStdString(buf.lines[row]);
+    size_t first = firstVisibleRow();
+    size_t last = lastVisibleRow();
+
+    for (size_t row = std::max(start.row, first); row <= std::min(end.row, last); row++) {
+        QString line = QString::fromStdString(buf.lines[row].substr(0, maxCols()));
         size_t fromCol = (row == start.row) ? start.col : 0;
         size_t toCol = (row == end.row) ? end.col : line.size();
 
         int x1 = gutterWidth + fontMetrics().horizontalAdvance(line.left(int(fromCol)));
         int x2 = gutterWidth + fontMetrics().horizontalAdvance(line.left(int(toCol)));
         if (row != end.row) {
-            x2 += charWidth; // show the newline is selected
+            x2 += charWidth(); // show the newline is selected
         }
 
-        int top = int(row) * lineHeight - scrollY;
-        painter.fillRect(x1, top, x2 - x1, lineHeight, QColor(173, 214, 255)); // light blue
+        int top = int(row) * lineHeight() - scrollY;
+        painter.fillRect(x1, top, x2 - x1, lineHeight(), QColor(173, 214, 255)); // light blue
     }
 }
 
 
 void Editor::drawLines(QPainter& painter) {
-    int lineHeight = fontMetrics().height();
-    int charWidth = fontMetrics().horizontalAdvance('0');
-
     int gutterWidth = textLeft(); // space reserved for line numbers on the left
 
-    int dividerX = gutterWidth - charWidth;
+    int dividerX = gutterWidth - charWidth();
     // loop through all lines and draw both line numbers and text contents
-    for (size_t i = 0; i < buf.lines.size(); i++) {
-        int y = int(i) * lineHeight - scrollY + fontMetrics().ascent();
+    for (int i = firstVisibleRow(); i <= lastVisibleRow(); i++) {
+        int y = int(i) * lineHeight() - scrollY + fontMetrics().ascent();
         QString num = QString::number(int(i) + 1);
-        int numX = dividerX - charWidth - int(num.length()) * charWidth;
+        int numX = dividerX - charWidth() - int(num.length()) * charWidth();
         painter.drawText(numX, y, num);
-        painter.drawText(gutterWidth, y, QString::fromStdString(buf.lines[i]));
+        painter.drawText(gutterWidth, y, QString::fromStdString(buf.lines[i].substr(0, maxCols())));
     }
 }

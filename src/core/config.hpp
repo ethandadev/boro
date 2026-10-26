@@ -17,4 +17,3 @@ inline const size_t MAX_UNDO = 1000;
 inline const std::string FONT_FAMILY   = "JetBrains Mono";
 inline const std::string FALLBACK_FONT = "Menlo";
 inline const int         FONT_SIZE     = 14;
-

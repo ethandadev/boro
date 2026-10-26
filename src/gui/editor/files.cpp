@@ -7,6 +7,8 @@ The main file for managing all file related stuff in the GUI.
 #include "editor.hpp"
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QElapsedTimer>
+#include <QDebug>
 
 void Editor::openFile() {
     // shows the macOS file picker dialog
@@ -18,7 +20,10 @@ void Editor::openFile() {
     QString path = QFileDialog::getOpenFileName(this, "Open File");   // empty if you pressed cancel
     if (!path.isEmpty()) {                                   // only if a file was actually picked
         resetState();
+        QElapsedTimer timer;
+        timer.start();
         loadFile(buf, path.toStdString());
+        qDebug() << "loaded in" << timer.elapsed() << "ms";
         updateTitle();
         update();    // redraw the editor with the new file
     }
