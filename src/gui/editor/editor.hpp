@@ -2,6 +2,7 @@
 #pragma once
 
 #include <QWidget>
+#include <QElapsedTimer>
 #include <QTimer>
 #include <QPainter>
 #include <utility>
@@ -89,6 +90,8 @@ class Editor : public QWidget {
         void replaceSelection(const std::string& text);
         void remember(const Edit& edit);   
         void resetState();
+
+        QElapsedTimer typingTimer;
 
     protected:
         //this stuff allows Qt to call ykyk

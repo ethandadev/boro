@@ -1,6 +1,7 @@
 // undo / redo stuff, rlly rlly complicated lmfao
 #include "editor.hpp"
 #include "config.hpp"
+#include <QElapsedTimer>
 
 // swap oldText (which starts at pos) for newText
 void Editor::applyChange(Cursor pos, const std::string& oldText, const std::string& newText) {
@@ -26,13 +27,17 @@ void Editor::replaceSelection(const std::string& text) {
 }
 
 void Editor::remember(const Edit& edit) {
-    if (canMerge && !undoStack.empty()) {
+    bool paused = !typingTimer.isValid() || typingTimer.elapsed() > 1000;   // more than 1s since the last edit
+    typingTimer.restart();
+
+    if (canMerge && !paused && !undoStack.empty()) {
         Edit& last = undoStack.back();
         bool bothTyping = last.removed.empty() && edit.removed.empty()
                        && edit.inserted.size() == 1 && edit.inserted != "\n"
-                       && last.inserted.find('\n') == std::string::npos;
+                       && last.inserted.find('\n') == std::string::npos
+                       && !(edit.inserted == " " && last.inserted.back() != ' ');   // a new word starts a new group
         if (bothTyping && edit.pos == endOf(last.pos, last.inserted)) {
-            last.inserted += edit.inserted; // typing right after the last letter: same group
+            last.inserted += edit.inserted;
             return;
         }
     }
