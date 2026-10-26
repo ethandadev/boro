@@ -30,9 +30,8 @@ void Editor::mousePressEvent(QMouseEvent* event) {
 
 void Editor::keepCursorVisible() {
     // keeps the cursor visible :D
-    int lineHeight = fontMetrics().height();
-    int cursorTop = int(buf.cursor.row) * lineHeight;
-    int cursorBottom = cursorTop + lineHeight;
+    int cursorTop = int(buf.cursor.row) * lineHeight();
+    int cursorBottom = cursorTop + lineHeight();
 
     // auto-scroll up or down if the cursor goes out of view bounds
     if (cursorTop < scrollY) {
@@ -60,8 +59,7 @@ void Editor::wheelEvent(QWheelEvent* event) {
 
 //some weird ahh helper function
 void Editor::clampScroll() {
-    int lineHeight = fontMetrics().height();
-    int contentHeight = int(buf.lines.size()) * lineHeight;
+    int contentHeight = int(buf.lines.size()) * lineHeight();
     int extra = int(height() * SCROLL_PAST_END);
     int maxScroll = contentHeight + extra - height();
 

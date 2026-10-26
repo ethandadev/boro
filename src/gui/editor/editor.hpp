@@ -40,6 +40,14 @@ class Editor : public QWidget {
         void redo();
 
     private:
+        int lineHeight();
+        int charWidth();
+
+        int firstVisibleRow();
+        int lastVisibleRow();
+
+        int maxCols();
+
         bool cursorVisible = true; // used for blinking cursor
         QTimer blinkTimer;         // controls cursor blink timing
 

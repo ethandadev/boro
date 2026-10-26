@@ -13,3 +13,6 @@ build-terminal/
 
 # node random stuff
 website/node_modules
+
+#other things
+.cache/
