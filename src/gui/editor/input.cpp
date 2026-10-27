@@ -1,3 +1,5 @@
+// src/gui/input.cpp
+// everything input related of the cursor.
 #include "editor.hpp"
 #include "config.hpp"
 #include <QKeyEvent>
@@ -7,9 +9,13 @@
 #include <QWheelEvent>
 #include <algorithm>
 
+// hi - ethandadev 3:37pm, tuesday october 27, 2026
+
 
 //nice things
 void Editor::mouseMoveEvent(QMouseEvent* event) {
+    // Qt calls this when the cursor is dragged
+    // while left click is held down.
     buf.cursor = positionAt(int(event->position().x()), int(event->position().y())); // update cursor while dragging mouse
     keepCursorVisible();
     resetBlink();
@@ -18,6 +24,7 @@ void Editor::mouseMoveEvent(QMouseEvent* event) {
 
 // move cursor to the right place
 void Editor::mousePressEvent(QMouseEvent* event) {
+    // moves the cursor when you clik
     Cursor pos = positionAt(int(event->position().x()), int(event->position().y()));
     buf.cursor = pos;
     anchor = pos; // update text cursor position on click
@@ -30,6 +37,9 @@ void Editor::mousePressEvent(QMouseEvent* event) {
 
 void Editor::keepCursorVisible() {
     // keeps the cursor visible :D
+
+    // edit: i wrote the thing above before but
+    // im too lazy to write new ones.
     int cursorTop = int(buf.cursor.row) * lineHeight();
     int cursorBottom = cursorTop + lineHeight();
 
@@ -40,11 +50,12 @@ void Editor::keepCursorVisible() {
         scrollY = cursorBottom - height();
     }
 
-    clampScroll();       // NEW: make sure scrollY is within valid range
+    clampScroll();       // make sure scrollY is within valid range
 }
 
 //scrolling
 void Editor::wheelEvent(QWheelEvent* event) {
+    // Qt calls this when you scroll, trackpad included.
     int deltaY;
     if (!event->pixelDelta().isNull()) {
         deltaY = event->pixelDelta().y(); // smooth trackpad scrolling
@@ -59,8 +70,11 @@ void Editor::wheelEvent(QWheelEvent* event) {
 
 //some weird ahh helper function
 void Editor::clampScroll() {
+    // helper function i think
+    // it clamps the scroll so that
+    // you cant scroll past the content.
     int contentHeight = int(buf.lines.size()) * lineHeight();
-    int extra = int(height() * SCROLL_PAST_END);
+    int extra = int(height() * SCROLL_PAST_END); // extra buffer in the bottom like Visual Studio Code :D
     int maxScroll = contentHeight + extra - height();
 
     scrollY = std::min(scrollY, maxScroll);
@@ -70,6 +84,7 @@ void Editor::clampScroll() {
 
 //something
 void Editor::keyPressEvent(QKeyEvent* event) {
+    // all input stuff
     int key = event->key();
     QString text = event->text();
     bool shift = event->modifiers() & Qt::ShiftModifier;
@@ -116,6 +131,7 @@ void Editor::keyPressEvent(QKeyEvent* event) {
 }
 
 void Editor::selectAll() {
+    // stuff for CMD+A
     anchor = Cursor(0,0);
     size_t last = buf.lines.size()-1;
     buf.cursor = Cursor(last, buf.lines[last].size());
@@ -125,6 +141,7 @@ void Editor::selectAll() {
 
 //the cool and actually useful stuff below :D
 void Editor::copy() {
+    //copy, CMD+C
     if (!hasSelection()) {
         return;
     }
@@ -132,6 +149,7 @@ void Editor::copy() {
 }
 
 void Editor::cut() {
+    // cut, CMD+X
     if (!hasSelection()){
         return;
     }
@@ -146,6 +164,7 @@ void Editor::cut() {
 }
 
 void Editor::paste() {
+    // paste, CMD+V
     std::string text = cleanText(QApplication::clipboard()->text().toStdString());
     if (text.empty()) {
         return;
@@ -155,5 +174,5 @@ void Editor::paste() {
     //this stuff goes below almost everything
     keepCursorVisible();
     resetBlink();
-    update();
+    update(); // 
 }

@@ -31,6 +31,7 @@ qt_standard_project_setup()
 # Create a program called "boro-gui" built from these source files.
 # CHANGED: new paths, and buffer.cpp is shared with the terminal version.
 # When you add more .cpp files later, they get listed here.
+
 qt_add_executable(boro-gui MACOSX_BUNDLE
     src/gui/main.cpp
     src/gui/editor/editor.cpp
@@ -47,7 +48,7 @@ set_target_properties(boro-gui PROPERTIES
     MACOSX_BUNDLE_BUNDLE_NAME "Boro"                    # the name in the menu bar
     MACOSX_BUNDLE_GUI_IDENTIFIER "com.ethandadev.boro"  # same ID as your pkg
     MACOSX_BUNDLE_SHORT_VERSION_STRING "0.2.0"          # version shown in "About"
-    MACOSX_BUNDLE_ICON_FILE boro.icns
+    MACOSX_BUNDLE_ICON_FILE boro.icns                   # the icon
 )
 
 # put the icon inside Boro.app/Contents/Resources
@@ -59,7 +60,7 @@ qt_add_resources(boro-gui "fonts"
     FILES resources/fonts/JetBrainsMono-Regular.ttf
 )
 
-# NEW: let gui files write #include "buffer.hpp" even though it lives in src/core/
+# let gui files write #include "buffer.hpp" even though it lives in src/core/
 target_include_directories(boro-gui PRIVATE src/core)
 
 

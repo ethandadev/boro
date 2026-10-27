@@ -1,6 +1,6 @@
 // src/gui/editor.hpp
 #pragma once
-
+// rawr
 #include <QWidget>
 #include <QElapsedTimer>
 #include <QTimer>
@@ -11,6 +11,7 @@
 
 #include "buffer.hpp" // text buffer and cursor logic
 
+//struct for undo redo i think
 struct Edit {
     Cursor pos;
     std::string removed;
@@ -41,6 +42,7 @@ class Editor : public QWidget {
         void redo();
 
     private:
+        // :D
         int lineHeight();
         int charWidth();
 
@@ -94,7 +96,7 @@ class Editor : public QWidget {
         QElapsedTimer typingTimer;
 
     protected:
-        //this stuff allows Qt to call ykyk
+        //this stuff allows Qt to call ykykykykyk
         void paintEvent(QPaintEvent* event) override;       // redraw editor
         void keyPressEvent(QKeyEvent* event) override;      // handle keyboard input
         void blink();                                       // toggle cursor visibility
@@ -103,3 +105,5 @@ class Editor : public QWidget {
         void mousePressEvent(QMouseEvent* event) override;  // handle mouse click / selection start
         void mouseMoveEvent(QMouseEvent* event) override;   // handle dragging to select text
     };
+
+// this file was easy to comment cuz most was already commented.
