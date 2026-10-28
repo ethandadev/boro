@@ -469,6 +469,7 @@ h2 {
 
   .cta {
     flex-direction: row;
+    justify-content: center;
   }
 
   .shot {
