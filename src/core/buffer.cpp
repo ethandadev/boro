@@ -7,6 +7,7 @@
 
 //load file function to make main cleaner
 bool loadFile(Buffer& buf, const std::string& path) {
+    // loads a file in the buffer.
     buf.fileName = path; // store the file name in the buffer
     if (!std::filesystem::exists(path)) {
         buf.lines.push_back(""); // if the file does not exist, create a new empty buffer
@@ -35,12 +36,14 @@ bool loadFile(Buffer& buf, const std::string& path) {
 }
 
 void insertChar(Buffer& buf, char c) {
+    // insert a character in the buffer
     buf.lines[buf.cursor.row].insert(buf.cursor.col, 1, c); // insert the character at the cursor position
     buf.cursor.col++; // Move cursor to the right
     buf.dirty = true; // set the dirty flag to true to indicate that the buffer has unsaved changes
 }
 
 void insertNewLine(Buffer& buf) {
+    // insert new line in buffer
     std::string afterCursor = buf.lines[buf.cursor.row].substr(buf.cursor.col); // substr is like s[5:] in python
     buf.lines[buf.cursor.row].erase(buf.cursor.col); // erase everything after the cursor position
     buf.lines.insert(buf.lines.begin() + buf.cursor.row + 1, afterCursor);
@@ -50,6 +53,7 @@ void insertNewLine(Buffer& buf) {
 }
 
 void deleteChar(Buffer& buf) {
+    // delete character in buffer
     if (buf.cursor.row == 0 && buf.cursor.col == 0) {
         return; // Nothing to delete if at the beginning of the buffer
     } else if (buf.cursor.col > 0) {
@@ -66,6 +70,7 @@ void deleteChar(Buffer& buf) {
 }
 
 bool saveFile(Buffer& buf,const std::string& path) {
+    // saves file from buffer
     std::ofstream file(path);
     if (!file) {
         return false;
@@ -81,6 +86,7 @@ bool saveFile(Buffer& buf,const std::string& path) {
 }
 
 void moveUp(Buffer& buf) {
+    // moves cursor up
     if (buf.cursor.row > 0) {
         buf.cursor.row--;
         if (buf.cursor.col > buf.lines[buf.cursor.row].length()) {
@@ -90,6 +96,7 @@ void moveUp(Buffer& buf) {
 }
 
 void moveDown(Buffer& buf) {
+    // move cursor down
     if (buf.cursor.row < buf.lines.size() - 1) {
         buf.cursor.row++;
         if (buf.cursor.col > buf.lines[buf.cursor.row].length()) {
@@ -99,6 +106,7 @@ void moveDown(Buffer& buf) {
 }
 
 void moveLeft(Buffer& buf) {
+    // moves cursor left
     if (buf.cursor.col > 0) {
         buf.cursor.col--;
     } else if (buf.cursor.row > 0) {
@@ -108,6 +116,7 @@ void moveLeft(Buffer& buf) {
 }
 
 void moveRight(Buffer& buf) {
+    // move cursor to thr right.
     if (buf.cursor.col < buf.lines[buf.cursor.row].length()) {
         buf.cursor.col++;
     } else if (buf.cursor.row < buf.lines.size() - 1) {
@@ -117,12 +126,14 @@ void moveRight(Buffer& buf) {
 }
 
 void insertTab(Buffer& buf) {
+    // insert tab
     buf.lines[buf.cursor.row].insert(buf.cursor.col, TAB_WIDTH, ' '); // insert the character at the cursor position
     buf.cursor.col += TAB_WIDTH; // Move cursor to the right
     buf.dirty = true; // set the dirty flag to true to indicate that the buffer has unsaved changes
 }
 
 //helper functions
+// i dont want to add comments so.
 
 std::string textBetween(const Buffer& buf, Cursor start, Cursor end) {
     if (start.row == end.row) {

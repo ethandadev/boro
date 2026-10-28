@@ -1,4 +1,4 @@
-// src/terminal.cpp
+// src/terminal/terminal.cpp
 #include "terminal.hpp"
 #include "config.hpp"
 #include <iostream>
@@ -88,3 +88,7 @@ void render(const Buffer& buf, const TerminalView& view) {
 
     std::cout << std::flush;   // send everything to the terminal NOW
 }
+
+
+// looks like theres enough comments here
+// so im not gonna add more comments

@@ -1,4 +1,4 @@
-//src/main.cpp
+//src/terminal/main.cpp
 #include <iostream> //main library to import
 #include <string> //for string
 #include <vector> //for vector
@@ -87,3 +87,6 @@ int main(int argc, char* argv[]) {
     
     return 0; // return 0 indicates that the program has completed successfully
 }
+
+// looks like theres enough comments here
+// so im not gonna add more comments
