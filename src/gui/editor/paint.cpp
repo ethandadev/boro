@@ -24,7 +24,7 @@ void Editor::drawCursor(QPainter& painter) {
 
     if (cursorVisible) {
         const std::string& line = buf.lines[buf.cursor.row];
-        QString beforeCursor = QString::fromStdString(line.substr(0, buf.cursor.col)); // like line[:col]
+        QString beforeCursor = QString::fromStdString(line.substr(0, std::min(buf.cursor.col, size_t(maxCols())))); // like line[:col]
         int cursorX = gutterWidth + fontMetrics().horizontalAdvance(beforeCursor);
         int cursorTop = int(buf.cursor.row) * lineHeight() - scrollY;
         painter.fillRect(cursorX, cursorTop, 2, lineHeight(), QColor(0, 0, 0)); // draw blinking cursor bar

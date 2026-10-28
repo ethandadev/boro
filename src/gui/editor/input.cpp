@@ -16,6 +16,7 @@
 void Editor::mouseMoveEvent(QMouseEvent* event) {
     // Qt calls this when the cursor is dragged
     // while left click is held down.
+    
     buf.cursor = positionAt(int(event->position().x()), int(event->position().y())); // update cursor while dragging mouse
     keepCursorVisible();
     resetBlink();
@@ -25,6 +26,7 @@ void Editor::mouseMoveEvent(QMouseEvent* event) {
 // move cursor to the right place
 void Editor::mousePressEvent(QMouseEvent* event) {
     // moves the cursor when you clik
+
     Cursor pos = positionAt(int(event->position().x()), int(event->position().y()));
     buf.cursor = pos;
     anchor = pos; // update text cursor position on click
