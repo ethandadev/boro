@@ -85,7 +85,7 @@ and should be ready on the next update.
 For anyone else(or me) to work on:
 
 - [x] GUI
-- [ ] Better Comments
+- [x] Better Comments
 - [x] Undo/Redo Features
 - [ ] File Hierarchy
 - [ ] Horizontal Scrolling
