@@ -39,7 +39,7 @@ GUI Version:
 brew install --cask ethandadev/tap/boro-app
 ```
 
-**Installer:** download `boro-0.2.0.pkg` from [Releases](https://github.com/ethandadev/boro/releases).
+**Installer:** download `boro-0.3.0.pkg` from [Releases](https://github.com/ethandadev/boro/releases).
 
 If you really want to use the terminal version for some reason then just download `boro-0.1.0.pkg`
 > **boro terminal** will no longer be regularly updated

@@ -5,7 +5,7 @@
 #include <string>
 
 inline const std::string APP_NAME = "Boro";
-inline const std::string VERSION  = "0.2.0";
+inline const std::string VERSION  = "0.3.0";
 inline const size_t TAB_WIDTH = 4;
 
 // editor settings

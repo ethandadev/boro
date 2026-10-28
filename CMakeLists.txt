@@ -47,7 +47,7 @@ set_target_properties(boro-gui PROPERTIES
     OUTPUT_NAME "Boro"                                  # the file becomes Boro.app
     MACOSX_BUNDLE_BUNDLE_NAME "Boro"                    # the name in the menu bar
     MACOSX_BUNDLE_GUI_IDENTIFIER "com.ethandadev.boro"  # same ID as your pkg
-    MACOSX_BUNDLE_SHORT_VERSION_STRING "0.2.0"          # version shown in "About"
+    MACOSX_BUNDLE_SHORT_VERSION_STRING "0.3.0"          # version shown in "About"
     MACOSX_BUNDLE_ICON_FILE boro.icns                   # the icon
 )
 

@@ -1,6 +1,6 @@
 CXX = clang++
 CXXFLAGS = -std=c++20 -Wall -Wextra -g -Isrc/core                       # CHANGED: -Isrc/core
-RELFLAGS = -std=c++20 -Wall -Wextra -O2 -Isrc/core                      # NEW: shared release flags
+RELFLAGS = -std=c++20 -Wall -Wextra -O2 -Isrc/core                      # shared release flags
 SRC = $(wildcard src/core/*.cpp) $(wildcard src/terminal/*.cpp)          # CHANGED
 HDR = $(wildcard src/core/*.hpp) $(wildcard src/terminal/*.hpp)          # CHANGED
 FILE ?= src/terminal/main.cpp                                            # CHANGED
